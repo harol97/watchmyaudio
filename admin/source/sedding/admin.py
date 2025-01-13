@@ -7,7 +7,7 @@ async def create_user():
     session = next(get_session())
     service = get_service(get_repository(session))
     try:
-        user = await service.get_by_email("harolav3@gmail.com")
+        user = await service.get_by_email("administrator@gmail.com")
         print(f"{user} already exists.")
     except:
         new_user = UserIn(

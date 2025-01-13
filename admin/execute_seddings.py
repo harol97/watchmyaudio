@@ -1,5 +1,5 @@
 from asyncio import run
 
-from source.sedding.admin import create_user
+from source.sedding import execute_all
 
-run(create_user())
+run(execute_all())
