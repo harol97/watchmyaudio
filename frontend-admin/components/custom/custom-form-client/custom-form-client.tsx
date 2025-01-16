@@ -1,20 +1,8 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 import { Label } from "@/components/ui/label";
 import Client from "@/entities/client";
@@ -31,14 +19,10 @@ export default function CustomFormClient({ type, client }: Props) {
   const isEdit = type === "edit";
   const action = isEdit ? updateClient : createClient;
   const [state, formAction, pending] = useActionState(action, undefined);
-  console.log(state?.errors);
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button
-          variant={isEdit ? "outline" : "default"}
-          size={isEdit ? "sm" : "default"}
-        >
+        <Button variant={isEdit ? "outline" : "default"} size={isEdit ? "sm" : "default"}>
           {isEdit ? (
             <>
               <Pencil className="mr-2 h-4 w-4" />
@@ -57,22 +41,14 @@ export default function CustomFormClient({ type, client }: Props) {
           <DialogTitle>{isEdit ? "Actualizar" : "Crear"} Client</DialogTitle>
         </DialogHeader>
         <form className="space-y-4" action={formAction}>
-          {isEdit && (
-            <input type="hidden" name="id" defaultValue={client?.id} />
-          )}
+          {isEdit && <input type="hidden" name="id" defaultValue={client?.id} />}
           <div className="space-y-2">
             <Label htmlFor="name">Nombre</Label>
             <Input id="name" defaultValue={client?.name} name="name" />
           </div>
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              defaultValue={client?.email}
-              readOnly={isEdit}
-              name="email"
-              type="email"
-            />
+            <Input id="email" defaultValue={client?.email} readOnly={isEdit} name="email" type="email" />
           </div>
           <div className="space-y-2">
             <Label htmlFor="email">Tipo</Label>
@@ -98,4 +74,3 @@ export default function CustomFormClient({ type, client }: Props) {
     </Dialog>
   );
 }
-
