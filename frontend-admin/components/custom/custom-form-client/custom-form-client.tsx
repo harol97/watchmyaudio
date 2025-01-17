@@ -1,76 +1,76 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 import { Label } from "@/components/ui/label";
 import Client from "@/entities/client";
 import { createClient, updateClient } from "@/services/client";
-import { Pencil, PlusCircle } from "lucide-react";
-import { useActionState } from "react";
+import { ClientFormState } from "@/services/client/validators";
+import { useRouter } from "next/navigation";
+import { useActionState, useCallback, useRef } from "react";
 
 interface Props {
   type: "edit" | "create";
   client?: Client;
+  disabled?: boolean;
+  onCancel?: () => void;
+  onSubmitOk?: () => void;
 }
 
-export default function CustomFormClient({ type, client }: Props) {
+export default function CustomFormClient({ onSubmitOk, disabled, onCancel, type, client }: Props) {
   const isEdit = type === "edit";
-  const action = isEdit ? updateClient : createClient;
+  const formRef = useRef<HTMLFormElement>(null);
+  const { refresh } = useRouter();
+  const action = useCallback(async (_: ClientFormState, formData: FormData) => {
+    const result = isEdit ? await updateClient(formData) : await createClient(formData);
+    if (result && !result.errors) {
+      refresh();
+      onSubmitOk?.();
+    }
+    return result;
+  }, []);
   const [state, formAction, pending] = useActionState(action, undefined);
+  const stateColor = state?.errors ? "text-red-500" : "text-green-500";
+
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant={isEdit ? "outline" : "default"} size={isEdit ? "sm" : "default"}>
-          {isEdit ? (
-            <>
-              <Pencil className="mr-2 h-4 w-4" />
-              Editar
-            </>
-          ) : (
-            <>
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Nuevo
-            </>
-          )}
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{isEdit ? "Actualizar" : "Crear"} Client</DialogTitle>
-        </DialogHeader>
-        <form className="space-y-4" action={formAction}>
-          {isEdit && <input type="hidden" name="id" defaultValue={client?.id} />}
-          <div className="space-y-2">
-            <Label htmlFor="name">Nombre</Label>
-            <Input id="name" defaultValue={client?.name} name="name" />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" defaultValue={client?.email} readOnly={isEdit} name="email" type="email" />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="email">Tipo</Label>
-            <Select name="kind" defaultValue={client?.kind}>
-              <SelectTrigger>
-                <SelectValue placeholder="Ingrese el Tipo" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="UNDEFINED">UNDEFINED</SelectItem>
-                <SelectItem value="SCHEDULE">SCHEDULE</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="email">Contraseña</Label>
-            <Input id="password" name="password" type="password" />
-          </div>
-          <Button type="submit" disabled={pending}>
-            {isEdit ? "Actualizar" : "Crear"}
-          </Button>
-        </form>
-      </DialogContent>
-    </Dialog>
+    <form ref={formRef} className="grid grid-cols-2 rounded-xl p-5 shadow-2xl gap-2 bg-white" action={formAction}>
+      <p className={`col-span-full text-center ${stateColor}`}>{state?.message}</p>
+      {isEdit && <input type="hidden" name="id" defaultValue={client?.id} />}
+      <Label htmlFor="name">Name (*)</Label>
+      <Input disabled={disabled} id="name" defaultValue={client?.name} name="name" />
+      <Label htmlFor="email">Email (*)</Label>
+      <Input disabled={disabled} id="email" defaultValue={client?.email} name="email" type="email" />
+      <Label htmlFor="email">Kind (*)</Label>
+      <Select disabled={disabled} name="kind" defaultValue={client?.kind}>
+        <SelectTrigger>
+          <SelectValue placeholder="" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="UNDEFINED">UNDEFINED</SelectItem>
+          <SelectItem value="SCHEDULE">SCHEDULE</SelectItem>
+        </SelectContent>
+      </Select>
+      <Label htmlFor="phone">Phone (*)</Label>
+      <Input disabled={disabled} defaultValue={client?.phone} id="phone" name="phone" type="text" />
+      <Label htmlFor="web">Web (*)</Label>
+      <Input disabled={disabled} id="web" name="web" type="url" defaultValue={client?.web} />
+      <Label htmlFor="language">Language (*)</Label>
+      <Input disabled={disabled} id="language" name="language" defaultValue={client?.language} />
+      <Label htmlFor="email">Password {!isEdit && "(*)"}</Label>
+      <Input disabled={disabled} id="password" name="password" type="password" />
+      <Button type="submit" disabled={pending || disabled}>
+        {isEdit ? "Save" : "Create"}
+      </Button>
+      <Button
+        disabled={disabled}
+        type="button"
+        onClick={() => {
+          onCancel?.();
+        }}
+      >
+        Cancel
+      </Button>
+    </form>
   );
 }

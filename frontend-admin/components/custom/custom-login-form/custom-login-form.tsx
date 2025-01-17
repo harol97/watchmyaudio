@@ -5,9 +5,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { login, loginAdmin } from "@/services/auth";
+import { ClientFormState } from "@/services/client/validators";
 import { motion } from "framer-motion";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useActionState, useState } from "react";
 
 export type Props = {
@@ -17,7 +19,14 @@ export type Props = {
 export default function CustomLoginForm({ type }: Props) {
   const [showPassword, setShowPassword] = useState(false);
   const title = type === "admin" ? "Administrator" : "Client";
-  const action = type === "admin" ? loginAdmin : login;
+  const { refresh } = useRouter();
+
+  const action = async (state: ClientFormState, formData: FormData) => {
+    const result = type === "admin" ? await loginAdmin(state, formData) : await login(state, formData);
+    if (!result.errors) refresh();
+    return result;
+  };
+
   const [state, formAction, pending] = useActionState(action, undefined);
 
   return (
@@ -30,24 +39,15 @@ export default function CustomLoginForm({ type }: Props) {
           transition={{ duration: 0.3 }}
           className="absolute top-0 left-0 mt-4 ml-4 sm:mt-6 sm:ml-6"
         >
-          <Link
-            href="/login"
-            className="inline-flex items-center text-gray-600 hover:text-gray-800 transition-colors"
-          >
+          <Link href="/login" className="inline-flex items-center text-gray-600 hover:text-gray-800 transition-colors">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back
           </Link>
         </motion.div>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
           <Card className="bg-white/50 backdrop-blur-sm shadow-lg mt-12 sm:mt-16">
             <CardContent className="p-6">
-              <h2 className="text-2xl font-light text-center text-gray-800 mb-6">
-                Log In {title}{" "}
-              </h2>
+              <h2 className="text-2xl font-light text-center text-gray-800 mb-6">Log In {title} </h2>
               <form action={formAction} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="username" className="text-gray-700">
@@ -86,11 +86,7 @@ export default function CustomLoginForm({ type }: Props) {
                     </button>
                   </div>
                 </div>
-                <Button
-                  type="submit"
-                  className="w-full bg-gray-800 text-white hover:bg-gray-700"
-                  disabled={pending}
-                >
+                <Button type="submit" className="w-full bg-gray-800 text-white hover:bg-gray-700" disabled={pending}>
                   Enter
                 </Button>
               </form>
@@ -101,4 +97,3 @@ export default function CustomLoginForm({ type }: Props) {
     </>
   );
 }
-
