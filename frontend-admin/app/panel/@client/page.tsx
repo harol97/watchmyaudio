@@ -3,9 +3,13 @@ import CustomSection, { CustomSectionChild } from "@/components/custom/custom-se
 import { CustomSelect } from "@/components/custom/custom-select/select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { getAllRadioStationClient } from "@/services/radio-station";
 import { ReactNode } from "react";
 
-export default function HomeClientPage() {
+export default async function HomeClientPage() {
+
+  const radioStations = await getAllRadioStationClient(); 
+
   return (
     <BasePage title="DASHBOARD User" className="h-full">
       <CustomSection>
