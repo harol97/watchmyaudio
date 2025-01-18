@@ -23,7 +23,10 @@ export default function RadioStationSection({ client, radioStations, children }:
       onSubmit={(event) => {
         event.preventDefault();
         if (radioStationstoSend.length === 0) return;
-        saveAdvertisement(new FormData(event.currentTarget)).then((advertisement) => {
+        const formData = new FormData(event.currentTarget);
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        formData.set("timezone", timezone);
+        saveAdvertisement(formData).then((advertisement) => {
           if (!advertisement) {
             setMessageError("Error to save");
             setMessageSucces(undefined);

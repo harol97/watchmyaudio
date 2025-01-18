@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from typing import Sequence, cast
 
 from fastapi import HTTPException, UploadFile, status
@@ -55,7 +55,7 @@ class ServiceImplementation(Service):
             raise HTTPException(status.HTTP_409_CONFLICT)
 
         if client.kind == "UNDEFINED":
-            start_date = datetime.now()
+            start_date = datetime.now(timezone.utc) + timedelta(minutes=2)
         else:
             if not body.start_date or not body.end_date:
                 raise HTTPException(status.HTTP_400_BAD_REQUEST)

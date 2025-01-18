@@ -5,6 +5,7 @@ from ..admin.radio_station.controller import Controller as RadioStationControlle
 from ..admin.radio_station.dtos import RadioStation
 from .advertisement import advertisement_router
 from .auth import auth_router
+from .detection import detection_router
 
 public_router = APIRouter(prefix="/public")
 
@@ -27,3 +28,5 @@ public_router.add_api_route(
     response_model=list[RadioStation],
     dependencies=[Depends(get_current_client)],
 )
+
+public_router.include_router(detection_router)

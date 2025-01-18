@@ -1,5 +1,5 @@
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from difflib import SequenceMatcher
 from uuid import uuid4
 
@@ -73,8 +73,17 @@ def process_advertisement(
 
         while True:
             # Capturar un fragmento del stream en memoria
+            sio.emit(
+                "send_message",
+                {
+                    "message": "Analyzing...",
+                    "id": user_id,
+                    "radio_station": radio_station.name,
+                    "advertisement": advertisement.filename,
+                },
+            )
             if end_date:
-                current_datetime = datetime.now()
+                current_datetime = datetime.now(timezone.utc)
                 if current_datetime >= end_date:
                     return
 
@@ -100,7 +109,7 @@ def process_advertisement(
                 sio.emit(
                     "send_message",
                     {
-                        "detection_time": detection_time,
+                        "message": f"Detection at {detection_time}",
                         "id": user_id,
                         "radio_station": radio_station.name,
                         "advertisement": advertisement.filename,

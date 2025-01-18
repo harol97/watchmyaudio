@@ -5,8 +5,8 @@ export const CreateClientFormSchema = z.object({
   email: z.string().email("Incorrect Email"),
   kind: z.enum(["UNDEFINED", "SCHEDULE"], { message: "Incorrect Kind" }),
   password: z.string().nonempty("Password is empty"),
-  phone: z.string().nonempty("Incorrect phone"),
-  web: z.string().url("Incorrect Url"),
+  phone: z.string(),
+  web: z.string(),
   language: z.enum(["NEPALI", "ENGLISH"], { message: "Incorrect Language" }),
 });
 
@@ -15,8 +15,8 @@ export const EditClientFormSchema = z.object({
   email: z.string().email(),
   kind: z.enum(["UNDEFINED", "SCHEDULE"]).nullable(),
   password: z.string().nullable(),
-  phone: z.string().nonempty("Incorrect phone"),
-  web: z.string().url("Incorrect Url"),
+  phone: z.string(),
+  web: z.string(),
   language: z.enum(["NEPALI", "ENGLISH"], { message: "Incorrect Language" }),
 });
 

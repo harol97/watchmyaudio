@@ -32,7 +32,6 @@ export default function CustomFormClient({ onSubmitOk, disabled, onCancel, type,
   }, []);
   const [state, formAction, pending] = useActionState(action, undefined);
   const stateColor = state?.errors ? "text-red-500" : "text-green-500";
-  console.log(client);
   return (
     <form
       key={String(client?.id)}
@@ -56,9 +55,9 @@ export default function CustomFormClient({ onSubmitOk, disabled, onCancel, type,
           <SelectItem value="SCHEDULE">SCHEDULE</SelectItem>
         </SelectContent>
       </Select>
-      <Label htmlFor="phone">Phone (*)</Label>
+      <Label htmlFor="phone">Phone</Label>
       <Input disabled={disabled} defaultValue={client?.phone} id="phone" name="phone" type="text" />
-      <Label htmlFor="web">Web (*)</Label>
+      <Label htmlFor="web">Web</Label>
       <Input disabled={disabled} id="web" name="web" type="url" defaultValue={client?.web} />
       <Label htmlFor="language">Language (*)</Label>
       <Select disabled={disabled} name="language" defaultValue={client?.language}>
