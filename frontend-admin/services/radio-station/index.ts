@@ -24,3 +24,20 @@ export async function getAllRadioStation(): Promise<RadioStation[]> {
   if (response.status !== "success") return [];
   return response.data;
 }
+
+export async function deleteRadioStation(id: string): Promise<boolean> {
+  const response = await fetchWithToken<string>(`/admins/radio-stations/${id}`, {
+    method: "DELETE",
+  });
+  return response.status === "success";
+}
+
+export async function getAllRadioStationClient(): Promise<RadioStation[]> {
+  console.log("getAllRadioStationClient")
+  const response = await fetchWithToken<RadioStation[]>("/public/radio-stations", {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  });
+  if (response.status !== "success") return [];
+  return response.data;
+}

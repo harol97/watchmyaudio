@@ -26,7 +26,7 @@ export default async function HomeAdminPage() {
         <ClientSecion clients={clients} />
         <CustomSectionChild>
           <div>
-            <p>Load Stream Readio Stations</p>
+            <p>Load Stream Radio Stations</p>
             <RadioStationForm />
           </div>
           <div className=" flex flex-col gap-5">
