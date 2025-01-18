@@ -18,7 +18,7 @@ from .repository import Repository
 from .save_advertisement import AdvertisementSaver
 from .service import Service
 
-AdvertisementListAdapter = TypeAdapter(list[Advertisement])
+AdvertisementListAdapter = TypeAdapter(Sequence[Advertisement])
 
 
 @dataclass
@@ -54,10 +54,10 @@ class ServiceImplementation(Service):
         if not new_advertisement.advertisement_id:
             raise HTTPException(status.HTTP_409_CONFLICT)
 
-        if client.kind == "SCHEDULE":
+        if client.kind == "UNDEFINED":
             start_date = datetime.now()
         else:
-            if not body.start_date:
+            if not body.start_date or not body.end_date:
                 raise HTTPException(status.HTTP_400_BAD_REQUEST)
             start_date = body.start_date
 
@@ -87,7 +87,7 @@ class ServiceImplementation(Service):
         job = Scheduler.get_instance().append_job(
             process_advertisement,
             args["start_date"],
-            *[args["user_id"], advertisement, radio_station, args["end_date"]],
+            *[args["client_id"], advertisement, radio_station, args["end_date"]],
         )
         return AnalyzerModel(**{**args, "job_id": job.id})
 
@@ -105,7 +105,14 @@ class ServiceImplementation(Service):
         await self.repository.delete(
             cast(
                 AdvertisementModel,
-                self.repository.get_by_id(advertisement.advertisement_id),
+                await self.repository.get_by_id(advertisement.advertisement_id),
             )
         )
         self.repository.commit()
+        analyzers = await self.analyzer_repository.get_by_advertisement(
+            advertisement.advertisement_id
+        )
+        self.repository.commit()
+        scheduler = Scheduler.get_instance()
+        for analyzer in analyzers:
+            scheduler.delete_job(analyzer.job_id)

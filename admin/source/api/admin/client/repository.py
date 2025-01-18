@@ -15,6 +15,8 @@ class ClientModelUpdate(SQLModel):
     phone: str | None = None
     web: str | None = None
     language: str | None = None
+    url: str | None = None
+    kind: str | None = None
 
 
 class ClientRepository(ABC, BaseRepository):

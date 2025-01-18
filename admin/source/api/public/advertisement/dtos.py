@@ -1,13 +1,18 @@
 from datetime import datetime
 from typing import Annotated
+from uuid import uuid4
 
 from pydantic import Field
 
 from source.utils.custom_base_model import CustomBaseModel
 
 
+def generate_randome_name():
+    return str(uuid4())
+
+
 class AdvertisementIn(CustomBaseModel):
-    name: str
+    name: Annotated[str, Field(default_factory=generate_randome_name)]
     radio_stations_ids: list[int]
     start_date: datetime | None
     end_date: datetime | None

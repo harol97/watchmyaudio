@@ -10,7 +10,7 @@ advertisement_router = APIRouter(prefix="/advertisements", tags=["Advertisement"
 controller = Controller()
 
 advertisement_router.add_api_route(
-    "/{advertisement_id}", controller.delete, methods=["DELETE"]
+    "/{advertisement_id}", controller.delete, methods=["DELETE"], response_model=dict
 )
 advertisement_router.add_api_route(
     "", controller.create, methods=["POST"], response_model=Advertisement

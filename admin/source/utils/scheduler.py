@@ -2,6 +2,7 @@ from datetime import datetime
 from uuid import uuid4
 
 from apscheduler.job import Job
+from apscheduler.jobstores.base import JobLookupError
 from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -28,8 +29,11 @@ class Scheduler:
         return new_job
 
     def delete_job(self, job_id: str):
-        self.apscheduler.remove_job(job_id)
-        self.jobs_to_finish_process.add(job_id)
+        try:
+            self.apscheduler.remove_job(job_id)
+            self.jobs_to_finish_process.add(job_id)
+        except JobLookupError:
+            ...
 
     def should_process_job_finish(self, job_id: str) -> bool:
         try:

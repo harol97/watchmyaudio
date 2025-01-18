@@ -1,4 +1,5 @@
-from typing import Sequence, cast
+from dataclasses import dataclass
+from typing import Sequence
 
 from fastapi import HTTPException, status
 from pydantic.type_adapter import TypeAdapter
@@ -14,14 +15,10 @@ from .repository import ClientRepository
 from .service import Service
 
 
+@dataclass
 class ServiceImplementation(Service):
-    def __init__(
-        self,
-        repository: ClientRepository,
-        analyzer_repository: AnalyzerRepository,
-    ) -> None:
-        self.repository = repository
-        self.analyzer_repository = analyzer_repository
+    repository: ClientRepository
+    analyzer_repository: AnalyzerRepository
 
     async def create(self, new_client: ClientIn):
         old_client = await self.repository.get_by_email(new_client.email)

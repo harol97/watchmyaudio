@@ -18,6 +18,15 @@ class Repository(BaseRepository):
             select(AnalyzerModel).where(AnalyzerModel.client_id == client_id)
         ).all()
 
+    async def get_by_advertisement(
+        self, advertisement_id: int
+    ) -> Sequence[AnalyzerModel]:
+        return self.session.exec(
+            select(AnalyzerModel).where(
+                AnalyzerModel.advertisement_id == advertisement_id
+            )
+        ).all()
+
     async def get_by_radio_station(
         self, radio_station_id: int
     ) -> Sequence[AnalyzerModel]:

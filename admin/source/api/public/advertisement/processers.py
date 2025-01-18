@@ -1,5 +1,5 @@
 import os
-from datetime import datetime, tzinfo
+from datetime import datetime
 from difflib import SequenceMatcher
 from uuid import uuid4
 
@@ -52,7 +52,7 @@ def process_advertisement(
 ):
     with SimpleClient() as sio:
         sio.connect("http://localhost:8000")
-        sio.emit({"user_id": user_id})
+        sio.emit("join_room", {"id": user_id})
         model_name = "facebook/wav2vec2-large-960h"
         processor = Wav2Vec2Processor.from_pretrained(model_name)
         model = Wav2Vec2ForCTC.from_pretrained(model_name)
@@ -70,15 +70,12 @@ def process_advertisement(
 
         scheduler = Scheduler.get_instance()
         # Definir la zona horaria de Nepal
-        end_date_local_time = None
-        if end_date:
-            end_date_local_time = tzinfo().fromutc(end_date)
 
         while True:
             # Capturar un fragmento del stream en memoria
-            if end_date_local_time:
+            if end_date:
                 current_datetime = datetime.now()
-                if current_datetime >= end_date_local_time:
+                if current_datetime >= end_date:
                     return
 
             if scheduler.should_process_job_finish(job_id):
@@ -102,7 +99,12 @@ def process_advertisement(
                 detection_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 sio.emit(
                     "send_message",
-                    {"detection_time": detection_time, "user_id": user_id},
+                    {
+                        "detection_time": detection_time,
+                        "id": user_id,
+                        "radio_station": radio_station.name,
+                        "advertisement": advertisement.filename,
+                    },
                 )
 
             # Limpiar el archivo temporal

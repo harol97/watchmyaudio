@@ -42,4 +42,4 @@ async def leave_room(sid, data):
 
 @socket_server.event
 async def send_message(_, data):
-    await socket_server.emit("receive_data", data, room=str(data["user_id"]))
+    await socket_server.emit("receive_data", data, room=str(data["id"]))

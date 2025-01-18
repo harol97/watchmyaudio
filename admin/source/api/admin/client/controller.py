@@ -19,8 +19,7 @@ class Controller:
         return await service.create(new_client)
 
     async def update(self, service: ServiceDepends, body: UpdateBody, client_id: int):
-        await service.update(body, client_id)
-        return {}
+        return await service.update(body, client_id)
 
     async def get_active_all(self, service: ServiceDepends):
         return await service.get_active_all()

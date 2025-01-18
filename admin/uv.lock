@@ -18,7 +18,7 @@ dependencies = [
     { name = "passlib" },
     { name = "pyhumps" },
     { name = "pyjwt" },
-    { name = "python-socketio", extra = ["asyncio-client"] },
+    { name = "python-socketio", extra = ["asyncio-client", "client"] },
     { name = "sqlalchemy-utils" },
     { name = "sqlmodel" },
     { name = "torch" },
@@ -40,7 +40,7 @@ requires-dist = [
     { name = "passlib", specifier = ">=1.7.4" },
     { name = "pyhumps", specifier = ">=3.8.0" },
     { name = "pyjwt", specifier = ">=2.10.1" },
-    { name = "python-socketio", extras = ["asyncio", "asyncio-client"], specifier = ">=5.12.1" },
+    { name = "python-socketio", extras = ["asyncio", "asyncio-client", "client"], specifier = ">=5.12.1" },
     { name = "sqlalchemy-utils", specifier = ">=0.41.2" },
     { name = "sqlmodel", specifier = ">=0.0.22" },
     { name = "torch", specifier = ">=2.5.1" },
@@ -1074,6 +1074,10 @@ wheels = [
 asyncio-client = [
     { name = "aiohttp" },
 ]
+client = [
+    { name = "requests" },
+    { name = "websocket-client" },
+]
 
 [[package]]
 name = "pyyaml"
@@ -1636,6 +1640,15 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/55/98/e11401d8e9cd5d2bd0e95e9bf750f397489681965ee0c72fb84732257912/watchfiles-1.0.3-cp313-cp313-musllinux_1_1_x86_64.whl", hash = "sha256:1550be1a5cb3be08a3fb84636eaafa9b7119b70c71b0bed48726fd1d5aa9b868", size = 612637 },
     { url = "https://files.pythonhosted.org/packages/50/be/8393b68f2add0f839be6863f151bd6a7b242efc6eb2ce0c9f7d135d529cc/watchfiles-1.0.3-cp313-cp313-win32.whl", hash = "sha256:16db2d7e12f94818cbf16d4c8938e4d8aaecee23826344addfaaa671a1527b07", size = 271170 },
     { url = "https://files.pythonhosted.org/packages/f0/da/725f97a8b1b4e7b3e4331cce3ef921b12568af3af403b9f0f61ede036898/watchfiles-1.0.3-cp313-cp313-win_amd64.whl", hash = "sha256:160eff7d1267d7b025e983ca8460e8cc67b328284967cbe29c05f3c3163711a3", size = 285246 },
+]
+
+[[package]]
+name = "websocket-client"
+version = "1.8.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/e6/30/fba0d96b4b5fbf5948ed3f4681f7da2f9f64512e1d303f94b4cc174c24a5/websocket_client-1.8.0.tar.gz", hash = "sha256:3239df9f44da632f96012472805d40a23281a991027ce11d2f45a6f24ac4c3da", size = 54648 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/5a/84/44687a29792a70e111c5c477230a72c4b957d88d16141199bf9acb7537a3/websocket_client-1.8.0-py3-none-any.whl", hash = "sha256:17b44cc997f5c498e809b22cdf2d9c7a9e71c02c8cc2b6c56e7c2d1239bfa526", size = 58826 },
 ]
 
 [[package]]
