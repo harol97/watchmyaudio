@@ -7,7 +7,7 @@ export const CreateClientFormSchema = z.object({
   password: z.string().nonempty("Password is empty"),
   phone: z.string().nonempty("Incorrect phone"),
   web: z.string().url("Incorrect Url"),
-  language: z.string().nonempty("Incorrect Language"),
+  language: z.enum(["NEPALI", "ENGLISH"], { message: "Incorrect Language" }),
 });
 
 export const EditClientFormSchema = z.object({
@@ -17,7 +17,7 @@ export const EditClientFormSchema = z.object({
   password: z.string().nullable(),
   phone: z.string().nonempty("Incorrect phone"),
   web: z.string().url("Incorrect Url"),
-  language: z.string().nonempty("Incorrect Language"),
+  language: z.enum(["NEPALI", "ENGLISH"], { message: "Incorrect Language" }),
 });
 
 export type ClientFormState =

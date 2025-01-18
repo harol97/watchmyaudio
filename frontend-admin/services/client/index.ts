@@ -1,12 +1,22 @@
 "use server";
 
 import Advertisement from "@/entities/Advertisement";
+import Client from "@/entities/client";
 import { FetchException } from "@/lib/exceptions-fetch";
 import fetchWithToken from "@/lib/fetch-with-token";
 import { converFormDatatoObject } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 import { ClientResponse, GetAllResponse } from "./responses";
 import { ClientFormState, CreateClientFormSchema, EditClientFormSchema } from "./validators";
+
+export async function me(): Promise<Client> {
+  const response = await fetchWithToken<Client>("/public/clients/me", {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  });
+  if (response.status !== "success") throw new FetchException(response.message, response.statusCode);
+  return response.data;
+}
 
 export default async function getClients() {
   const response = await fetchWithToken<ClientResponse[]>("/admins/clients", { method: "GET" });
@@ -55,7 +65,7 @@ export async function updateClient(formData: FormData): Promise<ClientFormState>
     name: formData.get("name"),
     email: formData.get("email"),
     password: formData.get("password"),
-    kind: formData.get("kind"),
+    kind: kind,
     phone: formData.get("phone"),
     web: formData.get("web"),
     language: formData.get("language"),
@@ -71,7 +81,6 @@ export async function updateClient(formData: FormData): Promise<ClientFormState>
       message: "Error al actualizar",
     };
   }
-
   const id = formData.get("id");
   formData.delete("id");
   const response = await fetchWithToken<ClientResponse>(`/admins/clients/${id}`, {
@@ -114,4 +123,3 @@ export async function getAll() {
   if (response.status !== "success") return [];
   return response.data;
 }
-

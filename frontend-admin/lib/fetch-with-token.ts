@@ -22,4 +22,3 @@ export default async function fetchWithToken<T>(endpoint: string, options: Reque
   }
   return response;
 }
-

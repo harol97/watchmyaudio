@@ -32,9 +32,14 @@ export default function CustomFormClient({ onSubmitOk, disabled, onCancel, type,
   }, []);
   const [state, formAction, pending] = useActionState(action, undefined);
   const stateColor = state?.errors ? "text-red-500" : "text-green-500";
-
+  console.log(client);
   return (
-    <form ref={formRef} className="grid grid-cols-2 rounded-xl p-5 shadow-2xl gap-2 bg-white" action={formAction}>
+    <form
+      key={String(client?.id)}
+      ref={formRef}
+      className="grid grid-cols-2 rounded-xl p-5 shadow-2xl gap-2 bg-white"
+      action={formAction}
+    >
       <p className={`col-span-full text-center ${stateColor}`}>{state?.message}</p>
       {isEdit && <input type="hidden" name="id" defaultValue={client?.id} />}
       <Label htmlFor="name">Name (*)</Label>
@@ -56,7 +61,15 @@ export default function CustomFormClient({ onSubmitOk, disabled, onCancel, type,
       <Label htmlFor="web">Web (*)</Label>
       <Input disabled={disabled} id="web" name="web" type="url" defaultValue={client?.web} />
       <Label htmlFor="language">Language (*)</Label>
-      <Input disabled={disabled} id="language" name="language" defaultValue={client?.language} />
+      <Select disabled={disabled} name="language" defaultValue={client?.language}>
+        <SelectTrigger>
+          <SelectValue placeholder="" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="NEPALI">NEPALI</SelectItem>
+          <SelectItem value="ENGLISH">ENGLISH</SelectItem>
+        </SelectContent>
+      </Select>
       <Label htmlFor="email">Password {!isEdit && "(*)"}</Label>
       <Input disabled={disabled} id="password" name="password" type="password" />
       <Button type="submit" disabled={pending || disabled}>

@@ -24,7 +24,6 @@ export default async function baseFetch<T>(endpoint: string, options: RequestIni
   try {
     const base_url = process.env.BASE_URL;
     const url = `${base_url}${endpoint}`;
-
     const response = await fetch(url, options);
     const statusCode = response.status;
     try {

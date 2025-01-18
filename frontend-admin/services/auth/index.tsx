@@ -34,7 +34,7 @@ async function loginUser(state: loginFormState, formData: FormData, path: string
     };
   }
   const cookieStore = await cookies();
-  cookieStore.set("token", response.data.acces_token, {
+  cookieStore.set("token", response.data.accesToken, {
     httpOnly: true,
     sameSite: "strict",
     path: "/",
