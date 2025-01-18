@@ -69,7 +69,6 @@ class ServiceImplementation(Service):
                     advertisement_id=new_advertisement.advertisement_id,
                     client_id=client.client_id,
                     radio_station_id=radio_station.radio_station_id,
-                    job_id="",
                     start_date=start_date,
                     end_date=body.end_date,
                 )
@@ -80,12 +79,15 @@ class ServiceImplementation(Service):
         return advertisement_dto
 
     async def build_analyzer_obj(
-        self, advertisement: Advertisement, radio_station: RadioStation, **args
+        self,
+        advertisement: Advertisement,
+        radio_station: RadioStation,
+        **args,
     ) -> AnalyzerModel:
         job = Scheduler.get_instance().append_job(
             process_advertisement,
             args["start_date"],
-            *[advertisement, radio_station, args["end_date"]],
+            *[args["user_id"], advertisement, radio_station, args["end_date"]],
         )
         return AnalyzerModel(**{**args, "job_id": job.id})
 

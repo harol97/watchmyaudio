@@ -1,6 +1,7 @@
 from typing import Annotated
 
 from pydantic import EmailStr, Field, SecretStr
+from pydantic.networks import HttpUrl
 
 from source.utils.custom_base_model import CustomBaseModel
 
@@ -12,12 +13,18 @@ class ClientIn(CustomBaseModel):
     email: EmailStr
     password: str
     kind: ClientKind
+    web: HttpUrl
+    language: str
+    phone: str
 
 
 class UpdateBody(CustomBaseModel):
     name: str | None = None
     password: str | None = None
     kind: ClientKind | None = None
+    web: HttpUrl | None = None
+    language: str | None = None
+    phone: str | None = None
 
 
 class Client(CustomBaseModel):
@@ -26,3 +33,6 @@ class Client(CustomBaseModel):
     email: EmailStr
     password: SecretStr
     kind: ClientKind
+    web: HttpUrl
+    language: str
+    phone: str

@@ -10,7 +10,7 @@ from .dtos import RadioStation
 class Service(ABC):
     @abstractmethod
     @abstractmethod
-    async def create(self, url: HttpUrl, user: User) -> RadioStation:
+    async def create(self, url: HttpUrl, name: str, user: User) -> RadioStation:
         raise NotImplementedError()
 
     @abstractmethod
@@ -23,4 +23,8 @@ class Service(ABC):
 
     @abstractmethod
     async def get_by_ids(self, ids: list[int]) -> Sequence[RadioStation]:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def get_all(self) -> Sequence[RadioStation]:
         raise NotImplementedError()

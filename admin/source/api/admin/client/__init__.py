@@ -18,11 +18,11 @@ client_router.add_api_route(
 
 
 client_router.add_api_route(
-    "/{client_id}", controller.delete, methods=["DELETE"], response_model=None
+    "/{client_id}", controller.delete, methods=["DELETE"], response_model=dict
 )
 
 client_router.add_api_route(
-    "", controller.get_all, methods=["GET"], response_model=list[Client]
+    "", controller.get_active_all, methods=["GET"], response_model=list[Client]
 )
 
 client_router.add_api_route(

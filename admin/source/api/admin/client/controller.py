@@ -19,13 +19,15 @@ class Controller:
         return await service.create(new_client)
 
     async def update(self, service: ServiceDepends, body: UpdateBody, client_id: int):
-        return await service.update(body, client_id)
+        await service.update(body, client_id)
+        return {}
 
-    async def get_all(self, service: ServiceDepends):
-        return await service.get_all()
+    async def get_active_all(self, service: ServiceDepends):
+        return await service.get_active_all()
 
     async def get_by_id(self, service: ServiceDepends, client_id: int):
         return await service.get_by_id(client_id)
 
     async def delete(self, service: ServiceDepends, client_id: int):
-        return await service.delete(client_id)
+        await service.delete(client_id)
+        return {}

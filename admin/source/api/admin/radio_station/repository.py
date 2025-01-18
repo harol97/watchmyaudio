@@ -21,3 +21,7 @@ class Repository(ABC, BaseRepository):
     @abstractmethod
     async def get_by_ids(self, ids: list[int]) -> Sequence[RadioStationModel]:
         raise NotImplementedError()
+
+    @abstractmethod
+    async def get_all(self) -> Sequence[RadioStationModel]:
+        raise NotImplementedError()

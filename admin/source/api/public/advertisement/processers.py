@@ -6,7 +6,10 @@ from uuid import uuid4
 import ffmpeg
 import librosa
 import torch
+from socketio import SimpleClient
 from transformers import Wav2Vec2ForCTC, Wav2Vec2Processor
+
+from source.utils.scheduler import Scheduler
 
 from ...admin.radio_station.dtos import RadioStation
 from .dtos import Advertisement
@@ -41,52 +44,66 @@ def similarity(a, b):
 
 
 def process_advertisement(
-    advertisement: Advertisement, radio_station: RadioStation, end_date: datetime | None
+    job_id: str,
+    user_id: int,
+    advertisement: Advertisement,
+    radio_station: RadioStation,
+    end_date: datetime | None,
 ):
-    model_name = "facebook/wav2vec2-large-960h"
-    processor = Wav2Vec2Processor.from_pretrained(model_name)
-    model = Wav2Vec2ForCTC.from_pretrained(model_name)
-    # Archivo de anuncio comercial
-    ad_transcription = transcribe(advertisement.filename, processor, model)
+    with SimpleClient() as sio:
+        sio.connect("http://localhost:8000")
+        sio.emit({"user_id": user_id})
+        model_name = "facebook/wav2vec2-large-960h"
+        processor = Wav2Vec2Processor.from_pretrained(model_name)
+        model = Wav2Vec2ForCTC.from_pretrained(model_name)
+        # Archivo de anuncio comercial
+        ad_transcription = transcribe(advertisement.filename, processor, model)
 
-    # URL del stream
-    # stream_url = "https://cdnhd.iblups.com/hls/0773874174fd4eba8bb9eff741d190dc.m3u8"
-    stream_url = "https://live.itech.host:3225/stream"
-    stream_url = str(radio_station.url)
+        # URL del stream
+        # stream_url = "https://cdnhd.iblups.com/hls/0773874174fd4eba8bb9eff741d190dc.m3u8"
+        # stream_url = "https://live.itech.host:3225/stream"
+        stream_url = str(radio_station.url)
 
-    # Parámetros de detección
-    threshold = 0.5  # Umbral de similitud
-    fragment_duration = 10  # Duración de cada fragmento en segundos
+        # Parámetros de detección
+        threshold = 0.5  # Umbral de similitud
+        fragment_duration = 10  # Duración de cada fragmento en segundos
 
-    # Definir la zona horaria de Nepal
-    end_date_local_time = None
-    if end_date:
-        end_date_local_time = tzinfo().fromutc(end_date)
+        scheduler = Scheduler.get_instance()
+        # Definir la zona horaria de Nepal
+        end_date_local_time = None
+        if end_date:
+            end_date_local_time = tzinfo().fromutc(end_date)
 
-    while True:
-        # Capturar un fragmento del stream en memoria
-        if end_date_local_time:
-            current_datetime = datetime.now()
-            if current_datetime >= end_date_local_time:
+        while True:
+            # Capturar un fragmento del stream en memoria
+            if end_date_local_time:
+                current_datetime = datetime.now()
+                if current_datetime >= end_date_local_time:
+                    return
+
+            if scheduler.should_process_job_finish(job_id):
                 return
 
-        audio_data = stream_to_audio(stream_url, duration=fragment_duration)
+            audio_data = stream_to_audio(stream_url, duration=fragment_duration)
 
-        # Guardar el fragmento temporalmente en memoria
-        name = f"{uuid4()}.wav"
-        with open(name, "wb") as f:
-            f.write(audio_data)
+            # Guardar el fragmento temporalmente en memoria
+            name = f"{uuid4()}.wav"
+            with open(name, "wb") as f:
+                f.write(audio_data)
 
-        # Transcribir el fragmento del stream
-        fragment_transcription = transcribe(name, processor, model)
+            # Transcribir el fragmento del stream
+            fragment_transcription = transcribe(name, processor, model)
 
-        # Comparar las transcripciones
-        similarity_score = similarity(ad_transcription, fragment_transcription)
+            # Comparar las transcripciones
+            similarity_score = similarity(ad_transcription, fragment_transcription)
 
-        # Evaluar si el anuncio fue detectado
-        if similarity_score > threshold:
-            detection_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            print(f"Ad detected in the stream! Time: {detection_time} (Nepal Timezone)")
+            # Evaluar si el anuncio fue detectado
+            if similarity_score > threshold:
+                detection_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                sio.emit(
+                    "send_message",
+                    {"detection_time": detection_time, "user_id": user_id},
+                )
 
-        # Limpiar el archivo temporal
-        os.remove(name)
+            # Limpiar el archivo temporal
+            os.remove(name)

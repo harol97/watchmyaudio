@@ -9,4 +9,5 @@ class RadioStationModel(SQLModel, table=True):
         sa_column=Column(Integer, name="id", primary_key=True, autoincrement=True),
     )
     url: str
+    name: str
     user_id: int = Field(foreign_key="user.id")

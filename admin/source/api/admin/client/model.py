@@ -1,6 +1,9 @@
 from typing import Literal
 
+from pydantic import HttpUrl
 from sqlmodel import Column, Field, Integer, SQLModel
+
+from source.utils.database_helpers import HttpUrlType
 
 ClientKind = Literal["UNDEFINED", "SCHEDULE"]
 
@@ -17,3 +20,7 @@ class ClientModel(SQLModel, table=True):
     email: str = Field(unique=True)
     kind: str
     password: str
+    phone: str
+    web: HttpUrl = Field(sa_type=HttpUrlType)
+    language: str
+    active: bool = Field(default=True)

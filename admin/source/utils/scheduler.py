@@ -12,6 +12,7 @@ class Scheduler:
     def __init__(self) -> None:
         jobstores = {"default": SQLAlchemyJobStore(url="sqlite:///database2.db")}
         self.apscheduler = BackgroundScheduler(jobstores=jobstores)
+        self.jobs_to_finish_process: set[str] = set()
 
     @classmethod
     def get_instance(cls) -> "Scheduler":
@@ -20,7 +21,19 @@ class Scheduler:
         return cls.obj
 
     def append_job(self, func, start_date: datetime, *func_params) -> Job:
+        job_id = str(uuid4())
         new_job = self.apscheduler.add_job(
-            func, "date", run_date=start_date, args=func_params, id=str(uuid4())
+            func, "date", run_date=start_date, args=[job_id, *func_params], id=job_id
         )
         return new_job
+
+    def delete_job(self, job_id: str):
+        self.apscheduler.remove_job(job_id)
+        self.jobs_to_finish_process.add(job_id)
+
+    def should_process_job_finish(self, job_id: str) -> bool:
+        try:
+            self.jobs_to_finish_process.remove(job_id)
+            return True
+        except:
+            return False

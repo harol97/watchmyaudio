@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Sequence
 
 from sqlmodel import col, select
 
@@ -29,3 +30,6 @@ class RepositoryImplementation(Repository):
                 col(RadioStationModel.radio_station_id).in_(ids)
             )
         ).all()
+
+    async def get_all(self) -> Sequence[RadioStationModel]:
+        return self.session.exec(select(RadioStationModel)).all()

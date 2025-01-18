@@ -8,6 +8,7 @@ from pydantic import BaseModel
 
 SECRET_KEY = "addassadsad"
 ALGORITHM = "HS256"
+TOKEN_MINUTES_DURATION = 5000000
 
 
 class AuthData(BaseModel):
@@ -21,7 +22,7 @@ def create_access_token(data: AuthData, expires_delta: timedelta | None = None) 
     if expires_delta:
         expire = datetime.now(timezone.utc) + expires_delta
     else:
-        expire = datetime.now(timezone.utc) + timedelta(minutes=15)
+        expire = datetime.now(timezone.utc) + timedelta(minutes=TOKEN_MINUTES_DURATION)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(cast(dict, to_encode), SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt

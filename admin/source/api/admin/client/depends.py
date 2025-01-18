@@ -5,6 +5,7 @@ from fastapi import Depends, HTTPException, status
 from source.dependencies.session import SessionDepends
 from source.utils.token import AuthDataDepends
 
+from ...public.analyzer.depends import RepositoryDepends as AnalyzerRepositoryDepends
 from .dtos import Client
 from .repository import ClientRepository
 from .repository_implementation import ClientRepositoryImplementaion
@@ -19,8 +20,10 @@ def get_repository(session: SessionDepends) -> ClientRepository:
 ClientRepositoryDepends = Annotated[ClientRepository, Depends(get_repository)]
 
 
-def get_service(repository: ClientRepositoryDepends) -> Service:
-    return ServiceImplementation(repository)
+def get_service(
+    repository: ClientRepositoryDepends, analyzer_repository: AnalyzerRepositoryDepends
+) -> Service:
+    return ServiceImplementation(repository, analyzer_repository)
 
 
 ServiceDepends = Annotated[Service, Depends(get_service)]

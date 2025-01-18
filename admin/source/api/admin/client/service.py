@@ -14,7 +14,7 @@ class Service(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    async def get_all(self) -> Sequence[Client]:
+    async def get_active_all(self) -> Sequence[Client]:
         raise NotImplementedError()
 
     @abstractmethod

@@ -4,6 +4,7 @@ from fastapi import Depends
 
 from source.dependencies.session import SessionDepends
 
+from ...public.analyzer.depends import RepositoryDepends as AnalyzerRepositoryDepends
 from .repository import Repository
 from .repository_implementation import RepositoryImplementation
 from .service import Service
@@ -16,8 +17,9 @@ def get_repository(session: SessionDepends) -> Repository:
 
 def get_service(
     repository: Annotated[Repository, Depends(get_repository)],
+    analyzer_repository: AnalyzerRepositoryDepends,
 ) -> Service:
-    return ServiceImplementation(repository)
+    return ServiceImplementation(repository, analyzer_repository)
 
 
 ServiceDepends = Annotated[Service, Depends(get_service)]

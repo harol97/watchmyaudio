@@ -4,7 +4,9 @@ from fastapi import HTTPException, status
 from pydantic.type_adapter import TypeAdapter
 
 from source.utils.password import generate, verify
+from source.utils.scheduler import Scheduler
 
+from ...public.analyzer.repository import Repository as AnalyzerRepository
 from ..client.repository import ClientModelUpdate
 from .dtos import Client, ClientIn, UpdateBody
 from .model import ClientModel
@@ -13,8 +15,13 @@ from .service import Service
 
 
 class ServiceImplementation(Service):
-    def __init__(self, repository: ClientRepository) -> None:
+    def __init__(
+        self,
+        repository: ClientRepository,
+        analyzer_repository: AnalyzerRepository,
+    ) -> None:
         self.repository = repository
+        self.analyzer_repository = analyzer_repository
 
     async def create(self, new_client: ClientIn):
         old_client = await self.repository.get_by_email(new_client.email)
@@ -38,8 +45,8 @@ class ServiceImplementation(Service):
         self.repository.commit()
         return Client.model_validate(client_updated)
 
-    async def get_all(self) -> Sequence[Client]:
-        clients_models = await self.repository.get_all()
+    async def get_active_all(self) -> Sequence[Client]:
+        clients_models = await self.repository.get_active_all()
         return TypeAdapter(Sequence[Client]).validate_python(clients_models)
 
     async def get_by_id(self, client_id: int) -> Client:
@@ -55,7 +62,7 @@ class ServiceImplementation(Service):
         return Client.model_validate(client)
 
     async def valid_account(self, email: str, password: str) -> Client:
-        client = await self.repository.get_by_email(email)
+        client = await self.repository.get_active_by_email(email)
         if not client:
             raise HTTPException(status.HTTP_404_NOT_FOUND)
         is_trust_password = verify(password, client.password)
@@ -64,6 +71,12 @@ class ServiceImplementation(Service):
         return Client(**client.model_dump())
 
     async def delete(self, client_id: int):
-        client = cast(ClientModel, await self.repository.get_by_id(client_id))
-        await self.repository.delete(client)
+        client = await self.repository.get_by_id(client_id)
+        if not client:
+            raise HTTPException(status.HTTP_404_NOT_FOUND)
+        await self.repository.update(ClientModelUpdate(active=False), client)
+        analyzers = await self.analyzer_repository.get_by_client(client_id)
         self.repository.commit()
+        scheduler = Scheduler.get_instance()
+        for analyzer in analyzers:
+            scheduler.delete_job(analyzer.job_id)
