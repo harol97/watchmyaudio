@@ -56,7 +56,7 @@ class ServiceImplementation(Service):
             raise HTTPException(status.HTTP_409_CONFLICT)
 
         if client.kind == "UNDEFINED":
-            start_date = datetime.now(timezone.utc) + timedelta(minutes=1)
+            start_date = datetime.now(timezone.utc) + timedelta(seconds=20)
         else:
             if not body.start_date or not body.end_date:
                 raise HTTPException(status.HTTP_400_BAD_REQUEST)

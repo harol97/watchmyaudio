@@ -16,6 +16,7 @@ export default async function HomeAdminPage() {
     <BasePage title="DASHBOARD WatchMyAudio">
       <CustomSection>
         <CustomSectionChild>
+          <p>Create Client</p>
           <CustomFormClient type="create" />
         </CustomSectionChild>
         <CustomSectionChild>
