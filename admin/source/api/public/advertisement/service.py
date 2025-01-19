@@ -22,6 +22,7 @@ class Service(ABC):
         client: Client,
         radio_stations: Sequence[RadioStation],
         saver_file: AdvertisementSaver,
+        timezone_client: str,
     ) -> Advertisement:
         raise NotImplementedError()
 

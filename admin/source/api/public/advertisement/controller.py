@@ -1,5 +1,4 @@
 from datetime import datetime
-from datetime import timezone as tz
 from typing import Annotated
 from uuid import uuid4
 
@@ -49,7 +48,9 @@ class Controller:
         radio_stations = await radio_station_service.get_by_ids(body.radio_stations_ids)
         if len(radio_stations) != len(body.radio_stations_ids):
             raise HTTPException(status.HTTP_409_CONFLICT)
-        return await service.create(file, body, client, radio_stations, file_saver)
+        return await service.create(
+            file, body, client, radio_stations, file_saver, timezone_client=timezone
+        )
 
     async def delete(self, service: ServiceDepends, advertisement_id: int):
         advertisement = await service.get_by_id(advertisement_id)

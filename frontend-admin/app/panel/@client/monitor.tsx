@@ -14,9 +14,7 @@ type Message = {
 };
 
 export default function Monitor({ client }: Props) {
-  const [messages, setMessages] = useState<Message[]>([
-    { message: "starting..", radioStationName: "", advertisement: "" },
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
     const socketConnection = io("http://localhost:8000");
@@ -25,7 +23,6 @@ export default function Monitor({ client }: Props) {
     });
     socketConnection.emit("join_room", { id: client.id });
     socketConnection.on("receive_data", (data) => {
-      console.log(data);
       setMessages((prev) => [
         ...prev,
         { message: data.message, advertisement: data.advertisement, radioStationName: data.radio_station },
@@ -38,6 +35,7 @@ export default function Monitor({ client }: Props) {
 
   return (
     <div className="grow h-80 max-h-80 shadow-2xl p-5 overflow-y-scroll  lg:min-h-0 lg:max-h-full">
+      <p className="pb-5">Welcome</p>
       {messages.map((mssg, index) => (
         <div className="pb-5" key={index}>
           <p>Message: {mssg.message}</p>

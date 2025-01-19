@@ -18,6 +18,7 @@ class ServiceImplementation(Service):
                 radio_station_name=detection.radio_station.name,
                 filename=detection.advertisement.filename,
                 detection_date=detection.datetime_utc,
+                timezone=detection.timezone,
             )
             for detection in detections
         ]

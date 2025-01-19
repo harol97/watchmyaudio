@@ -33,6 +33,7 @@ class ServiceImplementation(Service):
         client: Client,
         radio_stations,
         saver_file: AdvertisementSaver,
+        timezone_client: str,
     ) -> Advertisement:
         filename = file.filename
         if not filename:
@@ -55,7 +56,7 @@ class ServiceImplementation(Service):
             raise HTTPException(status.HTTP_409_CONFLICT)
 
         if client.kind == "UNDEFINED":
-            start_date = datetime.now(timezone.utc) + timedelta(minutes=2)
+            start_date = datetime.now(timezone.utc) + timedelta(minutes=1)
         else:
             if not body.start_date or not body.end_date:
                 raise HTTPException(status.HTTP_400_BAD_REQUEST)
@@ -66,6 +67,7 @@ class ServiceImplementation(Service):
                 await self.build_analyzer_obj(
                     advertisement_dto,
                     radio_station,
+                    timezone_client,
                     advertisement_id=new_advertisement.advertisement_id,
                     client_id=client.client_id,
                     radio_station_id=radio_station.radio_station_id,
@@ -82,12 +84,19 @@ class ServiceImplementation(Service):
         self,
         advertisement: Advertisement,
         radio_station: RadioStation,
+        timezone_client: str,
         **args,
     ) -> AnalyzerModel:
         job = Scheduler.get_instance().append_job(
             process_advertisement,
             args["start_date"],
-            *[args["client_id"], advertisement, radio_station, args["end_date"]],
+            *[
+                args["client_id"],
+                advertisement,
+                radio_station,
+                args["end_date"],
+                timezone_client,
+            ],
         )
         return AnalyzerModel(**{**args, "job_id": job.id})
 

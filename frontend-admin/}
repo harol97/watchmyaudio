@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import Client from "@/entities/client";
 import RadioStation from "@/entities/radio-station";
 import { saveAdvertisement } from "@/services/advertisement";
-import { useRouter } from "next/navigation";
 import { ReactNode, useRef, useState } from "react";
 import Row from "./row";
 
@@ -21,7 +20,6 @@ export default function RadioStationSection({ client, radioStations, children }:
   const [radioSelected, setRadioSelected] = useState<RadioStation>();
   const [messageError, setMessageError] = useState<string>();
   const [messageSuccess, setMessageSucces] = useState<string>();
-  const { refresh } = useRouter();
   return (
     <form
       onSubmit={(event) => {
@@ -36,7 +34,6 @@ export default function RadioStationSection({ client, radioStations, children }:
             setMessageSucces(undefined);
             return;
           }
-          refresh();
           setMessageError(undefined);
           setMessageSucces("File has been save sucessfully");
         });
@@ -81,7 +78,10 @@ export default function RadioStationSection({ client, radioStations, children }:
       <Row>
         <label>Add</label>
         <Input ref={inputFile} name="file" type="file" required />
-        <Button disabled={radioStationstoSend.length === 0} type="submit">
+        <Button
+          disabled={radioStationstoSend.length === 0 || Boolean(inputFile.current?.files?.length === 0)}
+          type="submit"
+        >
           Save
         </Button>
       </Row>

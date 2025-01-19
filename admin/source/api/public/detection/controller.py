@@ -8,13 +8,14 @@ from .responses import GetReportResponse
 
 class Controller:
     async def get_report(self, service: ServiceDepends, client: ClientDepends):
-        title = ["Client", "Radio Station", "Filename", "Detection Date"]
+        title = ["Client", "Radio Station", "Filename", "Detection Date", "Timezone"]
         rows = [
             [
                 report.client_name,
                 report.radio_station_name,
                 report.filename,
                 report.detection_date,
+                report.timezone,
             ]
             for report in await service.get_report(client)
         ]

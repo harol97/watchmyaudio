@@ -1,11 +1,13 @@
 from contextlib import asynccontextmanager
+from datetime import datetime
 
 from fastapi import FastAPI
 from socketio import ASGIApp, AsyncServer
 from sqlmodel import SQLModel
 
 from source.api import api_router
-from source.dependencies.session import engine
+from source.api.public.detection.model import Detection
+from source.dependencies.session import engine, get_session
 from source.utils.database_helpers import create_database_helper
 from source.utils.scheduler import Scheduler
 
@@ -32,6 +34,7 @@ app.mount("/", socket_app)
 async def join_room(sid, data):
     room_id = data["id"]
     await socket_server.enter_room(sid, str(room_id))
+    await socket_server.emit("receive_data", data, room=str(room_id), skip_sid=sid)
 
 
 @socket_server.event
@@ -41,5 +44,23 @@ async def leave_room(sid, data):
 
 
 @socket_server.event
-async def send_message(_, data):
-    await socket_server.emit("receive_data", data, room=str(data["id"]))
+async def send_message(sid, data: dict):
+    await socket_server.emit("receive_data", data, room=str(data["id"]), skip_sid=sid)
+    is_detection = data.get("is_detection", False)
+    if is_detection:
+        try:
+            session = next(get_session())
+            session.add(
+                Detection(
+                    datetime_utc=datetime.strptime(
+                        data["datetime_detection"], "%Y-%m-%d %H:%M:%S"
+                    ),
+                    advertisement_id=data["advertisement_id"],
+                    radio_station_id=data["radio_station_id"],
+                    client_id=data["id"],
+                    timezone=data["timezone"],
+                )
+            )
+            session.commit()
+        except:
+            ...

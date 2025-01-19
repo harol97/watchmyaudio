@@ -1,6 +1,5 @@
 import BasePage from "@/components/custom/base-page";
 import CustomSection, { CustomSectionChild } from "@/components/custom/custom-section";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { getMyAdvertisements } from "@/services/advertisement";
@@ -37,11 +36,6 @@ export default async function HomeClientPage() {
                 <Input type="datetime-local" name="end_date" required />
               </Row>
             )}
-            <Row>
-              <label>Add</label>
-              <Input name="file" type="file" required />
-              <Button type="submit">Save</Button>
-            </Row>
           </RadioStationSection>
           <Row>
             <label className="font-bold">View Report</label>

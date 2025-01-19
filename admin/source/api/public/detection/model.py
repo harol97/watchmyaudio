@@ -21,6 +21,7 @@ class Detection(SQLModel, table=True):
     advertisement_id: int = Field(foreign_key="advertisement.id")
     radio_station_id: int = Field(foreign_key="radio_station.id")
     client_id: int = Field(foreign_key="client.id")
+    timezone: str
 
     client: "ClientModel" = Relationship()
     radio_station: "RadioStationModel" = Relationship()

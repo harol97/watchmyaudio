@@ -8,3 +8,4 @@ class Report(CustomBaseModel):
     radio_station_name: str
     filename: str
     detection_date: datetime
+    timezone: str
