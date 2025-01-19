@@ -6,6 +6,8 @@ import pytz
 from fastapi import File, Form, HTTPException, UploadFile, status
 from pydantic_extra_types.timezone_name import TimeZoneName
 
+from source.utils.timezone_utlis import to_utc
+
 from ...admin.client.depends import ClientDepends
 from ...admin.radio_station.depends import ServiceDepends as RadioStationServiceDepends
 from .depends import FileSaverDepends, ServiceDepends
@@ -30,14 +32,10 @@ class Controller:
         end_date: Annotated[datetime | None, Form()] = None,
     ):
         if start_date:
-            local = pytz.timezone(timezone)
-            local_dt = local.localize(start_date, is_dst=None)
-            start_date = local_dt.astimezone(pytz.utc)
+            start_date = to_utc(start_date, timezone)
 
         if end_date:
-            local = pytz.timezone(timezone)
-            local_dt = local.localize(end_date, is_dst=None)
-            end_date = local_dt.astimezone(pytz.utc)
+            end_date = to_utc(end_date, timezone)
 
         body = AdvertisementIn(
             name=name,

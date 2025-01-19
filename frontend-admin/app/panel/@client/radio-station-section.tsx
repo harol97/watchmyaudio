@@ -64,7 +64,7 @@ export default function RadioStationSection({ client, radioStations, children }:
           onChange={(value) => setRadioSelected(radioStations.find((r) => r.id === Number(value)))}
           placeholder=""
           items={radioStations.map((radio) => ({ label: radio.name, value: String(radio.id) }))}
-        ></CustomSelect>
+        />
         <Button
           type="button"
           onClick={() =>
@@ -80,11 +80,11 @@ export default function RadioStationSection({ client, radioStations, children }:
       {children}
       <Row>
         <label>Add</label>
-        <Input ref={inputFile} name="file" type="file" required />
-        <Button disabled={radioStationstoSend.length === 0} type="submit">
-          Save
-        </Button>
+        <Input ref={inputFile} name="file" accept=".mp3" type="file" required />
       </Row>
+      <Button className="mx-10" disabled={radioStationstoSend.length === 0} type="submit">
+        Submit
+      </Button>
       {messageError && <p className="w-full text-red-600 text-center">{messageError}</p>}
       {messageSuccess && <p className="w-full text-green-600 text-center">{messageSuccess}</p>}
     </form>

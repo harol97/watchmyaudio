@@ -5,6 +5,7 @@ from uuid import uuid4
 
 import ffmpeg
 import librosa
+import pytz
 import torch
 from socketio import Client
 from transformers import Wav2Vec2ForCTC, Wav2Vec2Processor
@@ -106,11 +107,16 @@ def process_advertisement(
 
         # Evaluar si el anuncio fue detectado
         if similarity_score > threshold:
-            detection_time = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+            detection_time_obj = datetime.now(timezone.utc)
+            detection_time = detection_time_obj.strftime("%Y-%m-%d %H:%M:%S")
+            client_timezone = pytz.timezone(timezone_client)
+            detection_time_in_client_timezone = detection_time_obj.astimezone(
+                client_timezone
+            )
             sio.emit(
                 "send_message",
                 {
-                    "message": f"Detection at {detection_time} {timezone_client}",
+                    "message": f"Detection at {detection_time_in_client_timezone} {timezone_client}",
                     "datetime_detection": detection_time,
                     "id": user_id,
                     "radio_station": radio_station.name,

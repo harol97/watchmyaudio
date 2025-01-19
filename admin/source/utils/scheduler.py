@@ -12,9 +12,7 @@ class Scheduler:
 
     def __init__(self) -> None:
         jobstores = {"default": SQLAlchemyJobStore(url="sqlite:///database2.db")}
-        self.apscheduler = BackgroundScheduler(
-            jobstores=jobstores, timezone=timezone.utc
-        )
+        self.apscheduler = BackgroundScheduler(jobstores=jobstores)
         self.jobs_to_finish_process: set[str] = set()
 
     @classmethod

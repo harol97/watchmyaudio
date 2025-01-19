@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import datetime
 
 from ...admin.client.dtos import Client
 from .dtos import Report
@@ -10,8 +11,12 @@ from .service import Service
 class ServiceImplementation(Service):
     repository: Repository
 
-    async def get_report(self, client: Client) -> list[Report]:
-        detections = await self.repository.get_detections_by_client(client.client_id)
+    async def get_report(
+        self, client: Client, start_date: datetime, end_date: datetime
+    ) -> list[Report]:
+        detections = await self.repository.get_detections_by_client(
+            client.client_id, start_date, end_date
+        )
         return [
             Report(
                 client_name=detection.client.name,

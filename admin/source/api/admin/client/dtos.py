@@ -13,9 +13,9 @@ class ClientIn(CustomBaseModel):
     email: EmailStr
     password: str
     kind: ClientKind
-    web: HttpUrl
+    web: HttpUrl | None = None
     language: str
-    phone: str
+    phone: str | None = None
 
 
 class UpdateBody(CustomBaseModel):
@@ -33,6 +33,6 @@ class Client(CustomBaseModel):
     email: EmailStr
     password: SecretStr
     kind: ClientKind
-    web: HttpUrl
+    web: HttpUrl | None
     language: str
-    phone: str
+    phone: str | None

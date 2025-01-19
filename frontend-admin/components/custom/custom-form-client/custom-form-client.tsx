@@ -71,6 +71,12 @@ export default function CustomFormClient({ onSubmitOk, disabled, onCancel, type,
       </Select>
       <Label htmlFor="email">Password {!isEdit && "(*)"}</Label>
       <Input disabled={disabled} id="password" name="password" type="password" />
+      {type === "create" && (
+        <>
+          <Label htmlFor="email">Confirm Password (*)</Label>
+          <Input disabled={disabled} id="passwordConfirm" name="passwordConfirm" type="password" required />
+        </>
+      )}
       <Button type="submit" disabled={pending || disabled}>
         {isEdit ? "Save" : "Create"}
       </Button>

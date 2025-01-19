@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import { ReactNode } from "react";
 
 type Props = {
@@ -6,5 +7,5 @@ type Props = {
 };
 
 export default function Row({ children, className }: Props) {
-  return <div className={"flex flex-row items-center gap-x-5 " + className}>{children}</div>;
+  return <div className={clsx("flex flex-row items-center  gap-x-5", className)}>{children}</div>;
 }

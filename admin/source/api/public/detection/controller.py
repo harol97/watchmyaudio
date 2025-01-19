@@ -1,13 +1,22 @@
 from csv import writer
 from tempfile import NamedTemporaryFile
+from typing import Annotated
+
+from fastapi import Query
 
 from ...admin.client.depends import ClientDepends
 from .depends import ServiceDepends
+from .dtos import GetReportQuery
 from .responses import GetReportResponse
 
 
 class Controller:
-    async def get_report(self, service: ServiceDepends, client: ClientDepends):
+    async def get_report(
+        self,
+        service: ServiceDepends,
+        client: ClientDepends,
+        query: Annotated[GetReportQuery, Query()],
+    ):
         title = ["Client", "Radio Station", "Filename", "Detection Date", "Timezone"]
         rows = [
             [
@@ -17,7 +26,9 @@ class Controller:
                 report.detection_date,
                 report.timezone,
             ]
-            for report in await service.get_report(client)
+            for report in await service.get_report(
+                client, query.start_date_utc, query.end_date_utc
+            )
         ]
         name = ""
         with NamedTemporaryFile(delete=False) as file:

@@ -20,7 +20,7 @@ class ClientModel(SQLModel, table=True):
     email: str = Field(unique=True)
     kind: str
     password: str
-    phone: str
-    web: HttpUrl = Field(sa_type=HttpUrlType)
+    phone: str | None = None
+    web: HttpUrl | None = Field(default=None, sa_type=HttpUrlType)
     language: str
     active: bool = Field(default=True)

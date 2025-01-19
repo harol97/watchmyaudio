@@ -25,6 +25,10 @@ export default async function getClients() {
 }
 
 export async function createClient(formData: FormData): Promise<ClientFormState> {
+  const entries = Object.fromEntries(formData.entries());
+  Object.entries(entries).forEach(([key, value]) => {
+    if (value.toString().length === 0) formData.delete(key);
+  });
   const validateFields = CreateClientFormSchema.safeParse({
     name: formData.get("name"),
     email: formData.get("email"),
@@ -33,14 +37,16 @@ export async function createClient(formData: FormData): Promise<ClientFormState>
     phone: formData.get("phone"),
     web: formData.get("web"),
     language: formData.get("language"),
+    passwordConfirm: formData.get("passwordConfirm"),
   });
-
+  console.log(formData);
   if (!validateFields.success) {
     return {
       message: validateFields.error.errors[0].message ?? "",
       errors: validateFields.error.flatten().fieldErrors,
     };
   }
+  formData.delete("passwordConfirm");
   const response = await fetchWithToken<ClientResponse>("/admins/clients", {
     method: "POST",
     body: JSON.stringify(converFormDatatoObject(formData)),
@@ -49,6 +55,7 @@ export async function createClient(formData: FormData): Promise<ClientFormState>
   if (response.status !== "success")
     return {
       message: response.message,
+      errors: {},
     };
   revalidatePath("/panel");
   return {

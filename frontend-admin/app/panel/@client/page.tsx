@@ -6,9 +6,9 @@ import { getMyAdvertisements } from "@/services/advertisement";
 import { me } from "@/services/client";
 import { getAllRadioStationClient } from "@/services/radio-station";
 import ButtonDelete from "./button-delete-advertisement";
-import ButtonReport from "./button-report";
 import Monitor from "./monitor";
 import RadioStationSection from "./radio-station-section";
+import ReportSection from "./report-section";
 import Row from "./row";
 
 export default async function HomeClientPage() {
@@ -37,10 +37,7 @@ export default async function HomeClientPage() {
               </Row>
             )}
           </RadioStationSection>
-          <Row>
-            <label className="font-bold">View Report</label>
-            <ButtonReport />
-          </Row>
+          <ReportSection />
         </CustomSectionChild>
         <CustomSectionChild>
           <label className="font-bold">Live Monitor</label>
