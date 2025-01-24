@@ -1,6 +1,8 @@
 import os
 from datetime import datetime, timezone
 from difflib import SequenceMatcher
+from tempfile import NamedTemporaryFile
+from typing import Literal
 from uuid import uuid4
 
 import ffmpeg
@@ -51,6 +53,7 @@ def process_advertisement(
     radio_station: RadioStation,
     end_date: datetime | None,
     timezone_client: str,
+    language: Literal["NEPALI", "ENGLISH"],
 ):
     sio = Client()
     sio.connect("http://localhost:8000")
@@ -65,17 +68,14 @@ def process_advertisement(
         },
     )
     model_name = "facebook/wav2vec2-large-960h"
+    if language == "NEPALI":
+        model_name = "gagan3012/wav2vec2-xlsr-nepali"
+
     processor = Wav2Vec2Processor.from_pretrained(model_name)
     model = Wav2Vec2ForCTC.from_pretrained(model_name)
     # Archivo de anuncio comercial
     ad_transcription = transcribe(advertisement.filename, processor, model)
-
-    # URL del stream
-    # stream_url = "https://cdnhd.iblups.com/hls/0773874174fd4eba8bb9eff741d190dc.m3u8"
-    # stream_url = "https://live.itech.host:3225/stream"
     stream_url = str(radio_station.url)
-
-    # Parámetros de detección
     threshold = 0.5  # Umbral de similitud
     fragment_duration = 10  # Duración de cada fragmento en segundos
 
@@ -95,47 +95,44 @@ def process_advertisement(
         audio_data = stream_to_audio(stream_url, duration=fragment_duration)
 
         # Guardar el fragmento temporalmente en memoria
-        name = f"{uuid4()}.wav"
-        with open(name, "wb") as f:
-            f.write(audio_data)
+        with NamedTemporaryFile() as temp_file:
+            name = temp_file.name
+            with open(name, "wb") as f:
+                f.write(audio_data)
+            # Transcribir el fragmento del stream
+            fragment_transcription = transcribe(name, processor, model)
 
-        # Transcribir el fragmento del stream
-        fragment_transcription = transcribe(name, processor, model)
+            # Comparar las transcripciones
+            similarity_score = similarity(ad_transcription, fragment_transcription)
 
-        # Comparar las transcripciones
-        similarity_score = similarity(ad_transcription, fragment_transcription)
-
-        # Evaluar si el anuncio fue detectado
-        if similarity_score > threshold:
-            detection_time_obj = datetime.now(timezone.utc)
-            detection_time = detection_time_obj.strftime("%Y-%m-%d %H:%M:%S")
-            client_timezone = pytz.timezone(timezone_client)
-            detection_time_in_client_timezone = detection_time_obj.astimezone(
-                client_timezone
-            )
-            sio.emit(
-                "send_message",
-                {
-                    "message": f"Detection at {detection_time_in_client_timezone} {timezone_client}",
-                    "datetime_detection": detection_time,
-                    "id": user_id,
-                    "radio_station": radio_station.name,
-                    "advertisement_id": advertisement.advertisement_id,
-                    "radio_station_id": radio_station.radio_station_id,
-                    "advertisement": advertisement.filename,
-                    "is_detection": True,
-                    "timezone": timezone_client,
-                },
-            )
-            sio.emit(
-                "send_message",
-                {
-                    "message": "Analyzing...",
-                    "id": user_id,
-                    "radio_station": radio_station.name,
-                    "advertisement": advertisement.filename,
-                },
-            )
-
-        # Limpiar el archivo temporal
-        os.remove(name)
+            # Evaluar si el anuncio fue detectado
+            if similarity_score > threshold:
+                detection_time_obj = datetime.now(timezone.utc)
+                detection_time = detection_time_obj.strftime("%Y-%m-%d %H:%M:%S")
+                client_timezone = pytz.timezone(timezone_client)
+                detection_time_in_client_timezone = detection_time_obj.astimezone(
+                    client_timezone
+                )
+                sio.emit(
+                    "send_message",
+                    {
+                        "message": f"Detection at {detection_time_in_client_timezone} {timezone_client}",
+                        "datetime_detection": detection_time,
+                        "id": user_id,
+                        "radio_station": radio_station.name,
+                        "advertisement_id": advertisement.advertisement_id,
+                        "radio_station_id": radio_station.radio_station_id,
+                        "advertisement": advertisement.filename,
+                        "is_detection": True,
+                        "timezone": timezone_client,
+                    },
+                )
+                sio.emit(
+                    "send_message",
+                    {
+                        "message": "Analyzing...",
+                        "id": user_id,
+                        "radio_station": radio_station.name,
+                        "advertisement": advertisement.filename,
+                    },
+                )

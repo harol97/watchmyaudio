@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Literal
 
 from pydantic import EmailStr, Field, SecretStr
 from pydantic.networks import HttpUrl
@@ -34,5 +34,5 @@ class Client(CustomBaseModel):
     password: SecretStr
     kind: ClientKind
     web: HttpUrl | None
-    language: str
+    language: Literal["NEPALI", "ENGLISH"]
     phone: str | None

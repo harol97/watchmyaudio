@@ -11,6 +11,7 @@ class Report(CustomBaseModel):
     client_name: str
     radio_station_name: str
     filename: str
+    advertisement_id: int
     detection_date: datetime
     timezone: str
 

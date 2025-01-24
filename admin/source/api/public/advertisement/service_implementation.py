@@ -68,6 +68,7 @@ class ServiceImplementation(Service):
                     advertisement_dto,
                     radio_station,
                     timezone_client,
+                    client.language,
                     advertisement_id=new_advertisement.advertisement_id,
                     client_id=client.client_id,
                     radio_station_id=radio_station.radio_station_id,
@@ -85,6 +86,7 @@ class ServiceImplementation(Service):
         advertisement: Advertisement,
         radio_station: RadioStation,
         timezone_client: str,
+        language: str,
         **args,
     ) -> AnalyzerModel:
         job = Scheduler.get_instance().append_job(
@@ -96,6 +98,7 @@ class ServiceImplementation(Service):
                 radio_station,
                 args["end_date"],
                 timezone_client,
+                language,
             ],
         )
         return AnalyzerModel(**{**args, "job_id": job.id})

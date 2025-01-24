@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
+from typing import cast
 
 from ...admin.client.dtos import Client
 from .dtos import Report
@@ -22,6 +23,7 @@ class ServiceImplementation(Service):
                 client_name=detection.client.name,
                 radio_station_name=detection.radio_station.name,
                 filename=detection.advertisement.filename,
+                advertisement_id=cast(int, detection.advertisement.advertisement_id),
                 detection_date=detection.datetime_utc,
                 timezone=detection.timezone,
             )
