@@ -54,7 +54,7 @@ def process_advertisement(
     language: Literal["NEPALI", "ENGLISH"],
 ):
     sio = Client()
-    sio.connect("http://localhost:8000")
+    sio.connect("http://localhost")
 
     sio.emit(
         "join_room",
