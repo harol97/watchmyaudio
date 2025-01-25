@@ -74,7 +74,7 @@ export default function RadioStationSection({ radioStations, children }: Props) 
             })
           }
         >
-          Ok
+          Load Radio Stream
         </Button>
       </Row>
       {children}
