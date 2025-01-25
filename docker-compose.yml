@@ -22,6 +22,8 @@ services:
 
   nginx:
     restart: always
+    build:
+      context: .
     depends_on:
       - admin-backend
       - admin-frontend
