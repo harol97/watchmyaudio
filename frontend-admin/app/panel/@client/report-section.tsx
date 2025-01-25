@@ -33,7 +33,7 @@ export default function ReportSection() {
         <a
           aria-disabled={!startDate || !endDate}
           href={`${pathname}/api?startDate=${startDate}&endDate=${endDate}&timezone=${timezone}`}
-          download={"report.csv"}
+          download={"report.pdf"}
         >
           Export
         </a>

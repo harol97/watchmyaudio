@@ -31,6 +31,7 @@ export default function CustomLoginForm({ type }: Props) {
 
   return (
     <>
+      <div className="hidden">{state?.message}</div>
       <div className="absolute inset-0 bg-white bg-opacity-70"></div>
       <div className="relative z-10 w-full max-w-md">
         <motion.div
@@ -86,7 +87,7 @@ export default function CustomLoginForm({ type }: Props) {
                     </button>
                   </div>
                 </div>
-                <Button type="submit" className="w-full bg-gray-800 text-white hover:bg-gray-700" disabled={pending}>
+                <Button type="submit" className="w-full text-white hover:bg-gray-700" disabled={pending}>
                   Enter
                 </Button>
               </form>

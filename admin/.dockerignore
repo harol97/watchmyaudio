@@ -5,4 +5,6 @@ __pycache__
 *.db
 *.wav
 .pyc
+README.md
 *.mp3
+Dockerfile

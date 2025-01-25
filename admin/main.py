@@ -8,15 +8,15 @@ from sqlmodel import SQLModel
 from source.api import api_router
 from source.api.public.detection.model import Detection
 from source.dependencies.session import engine, get_session
-from source.utils.database_helpers import create_database_helper
+from source.setting import setting
 from source.utils.scheduler import Scheduler
+
+scheduler = Scheduler.get_instance().apscheduler
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    await create_database_helper("sqlite:///database.db")
     SQLModel.metadata.create_all(engine)
-    scheduler = Scheduler.get_instance().apscheduler
     scheduler.start()
     yield
     scheduler.shutdown(wait=False)
@@ -25,7 +25,7 @@ async def lifespan(_: FastAPI):
 socket_server = AsyncServer(cors_allowed_origins="*", async_mode="asgi")
 socket_app = ASGIApp(socket_server)
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPI(lifespan=lifespan, docs_url=setting.docs_url)
 app.include_router(api_router)
 app.mount("/", socket_app)
 

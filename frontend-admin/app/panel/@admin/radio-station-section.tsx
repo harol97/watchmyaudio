@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import CustomSelect from "@/components/custom/custom-select";
 import { Button } from "@/components/ui/button";
 import RadioStation from "@/entities/radio-station";
@@ -11,27 +11,28 @@ type Props = {
 };
 
 export default function RadioStationSection({ radioStations }: Props) {
-
   const router = useRouter();
   const [selectedRadioStation, setSelectedRadioStation] = useState<string | null>(null);
 
-  const handleDelete = async () => { 
+  const handleDelete = async () => {
     if (!selectedRadioStation) return;
     const deleted = await deleteRadioStation(selectedRadioStation);
-    if (deleted){
+    if (deleted) {
       router.refresh();
     }
-  }
+  };
 
   return (
     <>
-      <div className="flex flex-row gap-x-5">
+      <div className="flex flex-row gap-x-5 ">
         <CustomSelect
           placeholder="Select Radio Station"
           items={radioStations.map((radio) => ({ label: radio.name, value: String(radio.id) }))}
           onChange={(value) => setSelectedRadioStation(value)}
         />
-        <Button onClick={handleDelete} disabled={!selectedRadioStation}>Delete</Button>
+        <Button onClick={handleDelete} disabled={!selectedRadioStation}>
+          Delete
+        </Button>
       </div>
     </>
   );

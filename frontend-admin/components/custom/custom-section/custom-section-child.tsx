@@ -6,5 +6,5 @@ type CustomSectionChildProps = {
 };
 
 export default function CustomSectionChild({ children, className }: CustomSectionChildProps) {
-  return <section className={"flex flex-col gap-5  w-full " + className}>{children}</section>;
+  return <section className={"flex  flex-col gap-5  w-full " + className}>{children}</section>;
 }

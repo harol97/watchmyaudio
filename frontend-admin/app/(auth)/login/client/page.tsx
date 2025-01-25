@@ -1,10 +1,5 @@
-
-import CustomLoginForm from '@/components/custom/custom-login-form'
+import CustomLoginForm from "@/components/custom/custom-login-form";
 
 export default function AdminLogin() {
-
-  return (
-    <CustomLoginForm type='client'/>
-  )
+  return <CustomLoginForm type="client" />;
 }
-

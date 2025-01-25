@@ -15,7 +15,7 @@ type Props = {
   client: Client;
 };
 
-export default function RadioStationSection({ client, radioStations, children }: Props) {
+export default function RadioStationSection({ radioStations, children }: Props) {
   const [radioStationstoSend, setRadioStations] = useState<RadioStation[]>([]);
   const inputFile = useRef<HTMLInputElement>(null);
   const [radioSelected, setRadioSelected] = useState<RadioStation>();
@@ -41,7 +41,7 @@ export default function RadioStationSection({ client, radioStations, children }:
           setMessageSucces("File has been save sucessfully");
         });
       }}
-      className=" flex flex-col gap-5 grow"
+      className=" flex flex-col gap-5 grow "
     >
       <h2 className="font-bold">Selected Radio Stations</h2>
       <Row className="flex-col gap-5">

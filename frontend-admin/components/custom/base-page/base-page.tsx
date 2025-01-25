@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { logout } from "@/services/auth";
+import Image from "next/image";
 import { ReactNode } from "react";
 
 type Props = {
@@ -11,7 +12,8 @@ type Props = {
 export default function BasePage({ children, className, title }: Props) {
   return (
     <>
-      <header className="flex flex-row w-full p-5 shadow-2xl">
+      <header className="flex flex-row items-center w-full p-5 shadow-2xl">
+        <Image src={"/logo.png"} alt="logo.png" width={120} height={120} />
         <h1 className="font-bold text-left text-3xl grow">{title}</h1>
         <div>
           <Button onClick={logout}>Log Out</Button>

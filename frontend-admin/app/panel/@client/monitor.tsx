@@ -5,6 +5,7 @@ import { io } from "socket.io-client";
 
 type Props = {
   client: Client;
+  url: string;
 };
 
 type Message = {
@@ -13,11 +14,11 @@ type Message = {
   advertisement: string;
 };
 
-export default function Monitor({ client }: Props) {
+export default function Monitor({ client, url }: Props) {
   const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
-    const socketConnection = io("http://localhost:8000");
+    const socketConnection = io(url);
     socketConnection.on("connection", () => {
       socketConnection.emit("join_room", { id: client.id });
     });
@@ -31,10 +32,10 @@ export default function Monitor({ client }: Props) {
     return () => {
       socketConnection.emit("leave_room", { id: client.id });
     };
-  }, [client]);
+  }, [client, url]);
 
   return (
-    <div className="grow h-80 max-h-80 shadow-2xl p-5 overflow-y-scroll  lg:min-h-0 lg:max-h-full">
+    <div className="grow  border-[#2d4bac] border-[1px] rounded-2xl h-80 max-h-80 shadow-2xl p-5 overflow-y-scroll  lg:min-h-0 lg:max-h-full">
       <p className="pb-5">Welcome</p>
       {messages.map((mssg, index) => (
         <div className="pb-5" key={index}>

@@ -19,7 +19,7 @@ export default async function HomeClientPage() {
   return (
     <BasePage title="DASHBOARD User" className="h-full">
       <CustomSection>
-        <CustomSectionChild className="shadow-2xl p-5 rounded-2xl">
+        <CustomSectionChild className=" border-solid border-[1px] border-[#2d4bac] shadow-2xl p-5 rounded-2xl">
           <RadioStationSection client={client} radioStations={radioStations}>
             <h2 className="font-bold">Selected Files:</h2>
             <div className="flex flex-col gap-5">
@@ -39,9 +39,9 @@ export default async function HomeClientPage() {
           </RadioStationSection>
           <ReportSection />
         </CustomSectionChild>
-        <CustomSectionChild>
+        <CustomSectionChild className="border-[0]">
           <label className="font-bold">Live Monitor</label>
-          <Monitor client={client} />
+          <Monitor client={client} url={process.env.SOCKET_URL ?? ""} />
         </CustomSectionChild>
       </CustomSection>
     </BasePage>

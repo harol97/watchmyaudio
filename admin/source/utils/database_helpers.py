@@ -21,7 +21,6 @@ class HttpUrlType(TypeDecorator):
     def process_result_value(self, value: str | None, dialect) -> HttpUrl | None:
         if not value:
             return None
-        print("no????", value)
         return HttpUrl(url=value)
 
     def process_literal_param(self, value: str | None, dialect) -> str:

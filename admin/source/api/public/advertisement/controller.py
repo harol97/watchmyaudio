@@ -2,7 +2,6 @@ from datetime import datetime
 from typing import Annotated
 from uuid import uuid4
 
-import pytz
 from fastapi import File, Form, HTTPException, UploadFile, status
 from pydantic_extra_types.timezone_name import TimeZoneName
 

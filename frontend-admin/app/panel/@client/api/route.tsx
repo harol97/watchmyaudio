@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
-  const base = process.env.BASE_URL;
+  const base = process.env.BASE_URL ?? "";
   const cookiesStore = await cookies();
   const token = cookiesStore.get("token");
   if (!token) return Response.redirect("/login");
@@ -16,6 +16,7 @@ export async function GET(request: NextRequest) {
       )}&timezone=${searchParams.get("timezone")}`,
     { headers: headersInit }
   );
+  if (data.status === 401) return NextResponse.redirect("/");
   const response = new NextResponse(await data.blob(), { headers: data.headers });
   return response;
 }

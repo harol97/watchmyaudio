@@ -22,21 +22,24 @@ export default function CustomFormClient({ onSubmitOk, disabled, onCancel, type,
   const isEdit = type === "edit";
   const formRef = useRef<HTMLFormElement>(null);
   const { refresh } = useRouter();
-  const action = useCallback(async (_: ClientFormState, formData: FormData) => {
-    const result = isEdit ? await updateClient(formData) : await createClient(formData);
-    if (result && !result.errors) {
-      refresh();
-      onSubmitOk?.();
-    }
-    return result;
-  }, []);
+  const action = useCallback(
+    async (_: ClientFormState, formData: FormData) => {
+      const result = isEdit ? await updateClient(formData) : await createClient(formData);
+      if (result && !result.errors) {
+        refresh();
+        onSubmitOk?.();
+      }
+      return result;
+    },
+    [isEdit, onSubmitOk, refresh]
+  );
   const [state, formAction, pending] = useActionState(action, undefined);
   const stateColor = state?.errors ? "text-red-500" : "text-green-500";
   return (
     <form
       key={String(client?.id)}
       ref={formRef}
-      className="grid grid-cols-2 rounded-xl p-5 shadow-2xl gap-2 bg-white"
+      className="grid grid-cols-2 rounded-xl p-5 shadow-2xl gap-2 bg-white border-[#2d4bac] border-solid border-[1px]"
       action={formAction}
     >
       <p className={`col-span-full text-center ${stateColor}`}>{state?.message}</p>

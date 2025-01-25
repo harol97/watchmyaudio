@@ -15,7 +15,7 @@ export default function AdvertisementComponent({ clients }: Props) {
 
   return (
     <>
-      <div className="flex flex-row gap-x-5 items-center">
+      <div className="flex flex-row gap-x-5 items-center ">
         <span>Client</span>
         <CustomSelect
           onChange={(value) => {
@@ -24,7 +24,7 @@ export default function AdvertisementComponent({ clients }: Props) {
           items={clients.map((client) => ({ label: client.name, value: String(client.id) }))}
         />
       </div>
-      <div className="shadow-xl flex-grow overflow-y-scroll bg-white">
+      <div className="shadow-xl flex-grow overflow-y-scroll bg-white border-[#2d4bac] border-solid border-[1px] min-h-56 rounded-2xl">
         {advertisements.map(({ id, filename }) => (
           <p key={id}>{filename}</p>
         ))}
