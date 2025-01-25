@@ -1,9 +1,9 @@
 "use server";
 import baseFetch from "@/lib/base-fetch";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import { LoginResponse } from "./responses";
-import { LoginFormSchema, loginFormState } from "./validators";
+import {cookies} from "next/headers";
+import {redirect} from "next/navigation";
+import {LoginResponse} from "./responses";
+import {LoginFormSchema, loginFormState} from "./validators";
 
 export async function loginAdmin(state: loginFormState, formData: FormData) {
   return loginUser(state, formData, "/admins/auth/login", "1");

@@ -1,3 +1,3 @@
 FROM nginx
 
-COPY myconf.conf /etc/nginx/conf.d/
+COPY myconf.conf /etc/nginx/conf.d/default.conf
