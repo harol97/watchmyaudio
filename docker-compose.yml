@@ -18,7 +18,7 @@ services:
       - "8002:3000"
     environment:
       - BASE_URL=http://admin-backend/api
-      - SOCKET_URL=http:http://ixtream.ngrok.app
+      - SOCKET_URL=https:http://ixtream.ngrok.app
 
   nginx:
     restart: always
