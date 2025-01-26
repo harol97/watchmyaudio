@@ -82,9 +82,11 @@ export default function RadioStationSection({ radioStations, children }: Props) 
         <label>Add</label>
         <Input ref={inputFile} name="file" accept=".mp3" type="file" required />
       </Row>
-      <Button className="mx-10" disabled={radioStationstoSend.length === 0} type="submit">
-        Load MP3
-      </Button>
+      <Row className="justify-center">
+        <Button className="w-40" disabled={radioStationstoSend.length === 0} type="submit">
+          Load MP3
+        </Button>
+      </Row>
       {messageError && <p className="w-full text-red-600 text-center">{messageError}</p>}
       {messageSuccess && <p className="w-full text-green-600 text-center">{messageSuccess}</p>}
     </form>
