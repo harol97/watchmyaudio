@@ -39,7 +39,6 @@ export async function createClient(formData: FormData): Promise<ClientFormState>
     language: formData.get("language"),
     passwordConfirm: formData.get("passwordConfirm"),
   });
-  console.log(formData);
   if (!validateFields.success) {
     return {
       message: validateFields.error.errors[0].message ?? "",

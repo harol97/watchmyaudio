@@ -11,6 +11,7 @@ from ...admin.client.depends import ClientDepends
 from ...admin.radio_station.depends import ServiceDepends as RadioStationServiceDepends
 from .depends import FileSaverDepends, ServiceDepends
 from .dtos import AdvertisementIn
+from uuid import uuid4
 
 
 class Controller:
@@ -41,6 +42,7 @@ class Controller:
             radio_stations_ids=radio_station_id,
             start_date=start_date,
             end_date=end_date,
+            filename_in_system=f"{uuid4()}.mp3",
         )
         radio_stations = await radio_station_service.get_by_ids(body.radio_stations_ids)
         if len(radio_stations) != len(body.radio_stations_ids):
@@ -49,7 +51,13 @@ class Controller:
             file, body, client, radio_stations, file_saver, timezone_client=timezone
         )
 
-    async def delete(self, service: ServiceDepends, advertisement_id: int):
+    async def delete(
+        self,
+        service: ServiceDepends,
+        advertisement_id: int,
+        file_saver: FileSaverDepends,
+    ):
         advertisement = await service.get_by_id(advertisement_id)
         await service.delete(advertisement)
+        await file_saver.delete(advertisement.filename_in_system)
         return dict()

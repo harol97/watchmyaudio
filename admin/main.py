@@ -24,7 +24,6 @@ async def lifespan(_: FastAPI):
 
 socket_server = AsyncServer(cors_allowed_origins="*", async_mode="asgi")
 socket_app = ASGIApp(socket_server)
-
 app = FastAPI(lifespan=lifespan, docs_url=setting.docs_url)
 app.include_router(api_router)
 app.mount("/", socket_app)

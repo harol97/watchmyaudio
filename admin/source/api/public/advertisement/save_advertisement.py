@@ -5,3 +5,6 @@ from typing import BinaryIO
 class AdvertisementSaver(ABC):
     @abstractmethod
     async def save(self, file: BinaryIO, filename: str): ...
+
+    @abstractmethod
+    async def delete(self, filename: str): ...

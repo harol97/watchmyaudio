@@ -25,7 +25,6 @@ export async function getMyAdvertisements(): Promise<Advertisement[]> {
     method: "GET",
     headers: { "Content-Type": "application/json" },
   });
-  console.log(response);
   if (response.status !== "success") return [];
   return response.data;
 }

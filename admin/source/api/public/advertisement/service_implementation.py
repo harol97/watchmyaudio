@@ -35,19 +35,17 @@ class ServiceImplementation(Service):
         saver_file: AdvertisementSaver,
         timezone_client: str,
     ) -> Advertisement:
-        filename = file.filename
-        if not filename:
-            raise HTTPException(status.HTTP_409_CONFLICT)
-        await saver_file.save(file.file, filename)
+        await saver_file.save(file.file, body.filename_in_system)
 
         if client.kind == "UNDEFINED":
             body.end_date = None
-        else:
-            ...
 
         new_advertisement = await self.repository.create(
             AdvertisementModel(
-                filename=filename, client_id=client.client_id, name=body.name
+                filename=f"{file.filename}",
+                client_id=client.client_id,
+                name=body.name,
+                filename_in_system=body.filename_in_system,
             )
         )
         advertisement_dto = Advertisement.model_validate(new_advertisement)

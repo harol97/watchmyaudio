@@ -4,7 +4,7 @@ services:
     build:
       context: admin
     ports:
-      - "8001:80"
+      - "8001:8000"
     environment:
       - url=sqlite:///database.db
 
@@ -17,7 +17,7 @@ services:
     ports:
       - "8002:3000"
     environment:
-      - BASE_URL=http://admin-backend/api
+      - BASE_URL=http://admin-backend:8000/api
       - SOCKET_URL=https://ixtream.ngrok.app
 
   nginx:

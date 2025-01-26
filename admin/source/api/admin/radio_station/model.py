@@ -10,4 +10,4 @@ class RadioStationModel(SQLModel, table=True):
     )
     url: str
     name: str
-    user_id: int = Field(foreign_key="user.id")
+    user_id: int = Field(foreign_key="user.id", ondelete="CASCADE")

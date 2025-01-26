@@ -18,9 +18,9 @@ class Detection(SQLModel, table=True):
         sa_column=Column(Integer, name="id", primary_key=True, autoincrement=True),
     )
     datetime_utc: datetime
-    advertisement_id: int = Field(foreign_key="advertisement.id")
-    radio_station_id: int = Field(foreign_key="radio_station.id")
-    client_id: int = Field(foreign_key="client.id")
+    advertisement_id: int = Field(foreign_key="advertisement.id", ondelete="CASCADE")
+    radio_station_id: int = Field(foreign_key="radio_station.id", ondelete="CASCADE")
+    client_id: int = Field(foreign_key="client.id", ondelete="CASCADE")
     timezone: str
 
     client: "ClientModel" = Relationship()

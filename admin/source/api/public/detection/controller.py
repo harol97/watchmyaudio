@@ -20,3 +20,11 @@ class Controller:
         )
 
         return await reportfile_generator.generate_reportfile(detections)
+
+    async def get_data(
+        self,
+        client: ClientDepends,
+        service: ServiceDepends,
+        query: Annotated[GetReportQuery, Query()],
+    ):
+        return await service.get_data(client, query.start_date_utc, query.end_date_utc)

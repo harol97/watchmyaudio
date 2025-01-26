@@ -16,8 +16,10 @@ class AdvertisementIn(CustomBaseModel):
     radio_stations_ids: list[int]
     start_date: datetime | None
     end_date: datetime | None
+    filename_in_system: str
 
 
 class Advertisement(CustomBaseModel):
     advertisement_id: Annotated[int, Field(alias="id")]
     filename: str
+    filename_in_system: str

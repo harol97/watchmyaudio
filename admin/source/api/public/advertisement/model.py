@@ -10,4 +10,5 @@ class AdvertisementModel(SQLModel, table=True):
     )
     name: str
     filename: str
-    client_id: int = Field(foreign_key="client.id")
+    filename_in_system: str
+    client_id: int = Field(foreign_key="client.id", ondelete="CASCADE")

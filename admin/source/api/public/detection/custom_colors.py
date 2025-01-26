@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import TypedDict
 from reportlab.lib.colors import Color
 
 
@@ -7,6 +6,9 @@ from reportlab.lib.colors import Color
 class CustomColor:
     name: str
     rgb: Color
+
+    def as_string(self, factor: int = 1) -> str:
+        return f"rgb({','.join(tuple(map(lambda number: str(number * factor), self.rgb.rgba())))})"
 
 
 colors: list[CustomColor] = [

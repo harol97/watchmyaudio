@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings
 
 
 class Setting(BaseSettings):
-    url: str
+    url: str = "sqlite:///database.db"
     docs_url: str | None = None
 
 

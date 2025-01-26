@@ -54,7 +54,7 @@ def process_advertisement(
     language: Literal["NEPALI", "ENGLISH"],
 ):
     sio = Client()
-    sio.connect("http://localhost")
+    sio.connect("http://localhost:8000")
 
     sio.emit(
         "join_room",
@@ -72,7 +72,7 @@ def process_advertisement(
     processor = Wav2Vec2Processor.from_pretrained(model_name)
     model = Wav2Vec2ForCTC.from_pretrained(model_name)
     # Archivo de anuncio comercial
-    ad_transcription = transcribe(advertisement.filename, processor, model)
+    ad_transcription = transcribe(advertisement.filename_in_system, processor, model)
     stream_url = str(radio_station.url)
     threshold = 0.5  # Umbral de similitud
     fragment_duration = 10  # Duración de cada fragmento en segundos

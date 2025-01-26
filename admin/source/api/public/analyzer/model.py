@@ -18,9 +18,9 @@ class AnalyzerModel(SQLModel, table=True):
         alias="id",
         sa_column=Column(Integer, name="id", primary_key=True, autoincrement=True),
     )
-    advertisement_id: int = Field(foreign_key="advertisement.id")
-    radio_station_id: int = Field(foreign_key="radio_station.id")
-    client_id: int = Field(foreign_key="client.id")
+    advertisement_id: int = Field(foreign_key="advertisement.id", ondelete="CASCADE")
+    radio_station_id: int = Field(foreign_key="radio_station.id", ondelete="CASCADE")
+    client_id: int = Field(foreign_key="client.id", ondelete="CASCADE")
     start_date: datetime
     end_date: datetime | None
     job_id: str
