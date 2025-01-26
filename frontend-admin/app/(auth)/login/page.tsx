@@ -21,7 +21,7 @@ export default function Welcome() {
               <div className="flex justify-center">
                 <Image src={"/logo.png"} width={400} height={400} alt="logo.png" />
               </div>
-              <h2 className="text-xl font-light text-center text-gray-800 mb-4">Welcome to WhatchMyAudio</h2>
+              <h2 className="text-xl font-light text-center text-gray-800 mb-4">Welcome to TRACK MANDU</h2>
               <Link href="login/client">
                 <Button variant="outline" className="w-full">
                   Client
