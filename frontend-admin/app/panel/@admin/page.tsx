@@ -13,7 +13,7 @@ export default async function HomeAdminPage() {
   const radioStations = await getAllRadioStation();
 
   return (
-    <BasePage title="DASHBOARD WatchMyAudio">
+    <BasePage title="DASHBOARD">
       <CustomSection>
         <CustomSectionChild>
           <p>Create Client</p>
