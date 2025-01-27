@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
       )}&timezone=${searchParams.get("timezone")}`,
     { headers: headersInit }
   );
-  if (data.status === 401) return NextResponse.redirect("/");
+  if (data.status === 401) return NextResponse.redirect(new URL("/login", request.url));
   const response = new NextResponse(await data.blob(), { headers: data.headers });
   return response;
 }
