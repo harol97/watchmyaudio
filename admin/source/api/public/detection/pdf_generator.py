@@ -1,17 +1,17 @@
 from dataclasses import dataclass
-from datetime import datetime
 from itertools import groupby
 from random import choice
 from tempfile import NamedTemporaryFile
 from reportlab.graphics.charts.linecharts import HorizontalLineChart
 
 from fastapi.responses import FileResponse
-from reportlab.graphics.charts.barcharts import VerticalBarChart
 from reportlab.graphics.shapes import Drawing
 from reportlab.lib.colors import black
 from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.pdfbase.pdfmetrics import stringWidth
 from reportlab.pdfgen import canvas
+from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer
 from reportlab.platypus.tables import Table
 
 from source.utils.timezone_utlis import to_timezone
@@ -36,7 +36,16 @@ class PdfGenerator(ReportFileGenerator):
         return init / 10 if number <= 0 else self.get_max(number // init, init * 10)
 
     async def generate_reportfile(self, detections: list[Report]) -> FileResponse:
-        canva = canvas.Canvas(self.temp_file, pagesize=A4)
+        doc = SimpleDocTemplate(
+            self.temp_file.name,
+            pageSize=A4,
+            rightMargin=0,
+            leftMargin=0,
+            topMargin=0,
+            bottomMargin=0,
+        )
+        body = []
+
         months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
         data_per_month = []
         if detections:
@@ -73,13 +82,9 @@ class PdfGenerator(ReportFileGenerator):
                         )
                     )
                 )
-
-            xi, yi = 0, A4[1] - 50
-            title = "Graphic Report Distribution (Bar Chart)"
-            width_title = stringWidth(title, "Helvetica-Bold", 16)
-            canva.drawString((A4[0] - width_title) / 2, yi, title)
-            print(data_per_month)
-            # vertical bar
+            space = Spacer(1, 30)
+            body.append(Paragraph("Graphic Report Distribution (Bar Chart)"))
+            body.append(space)
             bc = HorizontalLineChart()
             bc.height = 200
             bc.strokeColor = black
@@ -91,35 +96,29 @@ class PdfGenerator(ReportFileGenerator):
             bc.valueAxis.valueStep = limit / 10
             bc.groupSpacing = 10
             bc.categoryAxis.labels.boxAnchor = "ne"
-            bc.categoryAxis.labels.angle = 70
-            bc.categoryAxis.categoryNames = "Jan Feb Mar Apr May Jun Jul Aug".split(" ")
+            bc.categoryAxis.categoryNames = (
+                "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split(" ")
+            )
             for index, item in enumerate(items):
                 bc.lines[index].strokeColor = item.color.rgb
             drawing = Drawing()
             drawing.add(bc)
-            drawing.drawOn(canva, xi, yi - 20 - bc.height)
-            # vertical bar
+            body.append(drawing)
+            body.append(space)
 
             # details
-            yi_details = yi - bc.height - 100
-            canva.drawString(
-                xi + 10,
-                yi_details,
-                "Details:",
-            )
-            yi_details -= 20
+            body.append(Paragraph("Details:"))
             for item in items:
-                canva.setFillColor(item.color.rgb)
-                canva.drawString(
-                    xi + 10,
-                    yi_details,
-                    f"- {item.filename} has been detected {item.times}",
+                style = getSampleStyleSheet()["Normal"]
+                style.textColor = item.color.rgb
+                body.append(
+                    Paragraph(
+                        f"- {item.filename} has been detected {item.times}", style
+                    )
                 )
-                yi_details -= 20
+            body.append(space)
 
             # last table
-            canva.showPage()
-
             table = Table(
                 [["Advertisement", "Radio Station", "Detection Datetime", "Timezone"]]
                 + [
@@ -132,14 +131,12 @@ class PdfGenerator(ReportFileGenerator):
                     for detection in detections
                 ]
             )
-            table.wrapOn(canva, 0, 0)
-            table.drawOn(canva, xi + 10, yi - 100)
+            body.append(table)
 
         else:
-            canva.drawString(10, 10, "There are not detection yet.")
+            body.append("There are not detection yet.")
 
-        canva.save()
-
+        doc.build(body)
         return FileResponse(self.temp_file.name, media_type="application/pdf")
 
     async def delete_file(self):

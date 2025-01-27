@@ -39,8 +39,7 @@ def get_token(
         payload = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
         data = AuthData.model_validate(payload)
         return data
-    except jwt.InvalidTokenError as e:
-        print(e)
+    except jwt.InvalidTokenError:
         raise credentials_exception
 
 

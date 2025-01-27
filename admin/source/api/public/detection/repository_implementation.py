@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Sequence
 
-from sqlmodel import Session, select
+from sqlmodel import Session, col, select
 
 from .model import Detection
 from .repository import Repository
@@ -16,9 +16,11 @@ class RepositoryImplementation(Repository):
         self, client_id: int, start_date: datetime, end_date: datetime
     ) -> Sequence[Detection]:
         return self.session.exec(
-            select(Detection).where(
+            select(Detection)
+            .where(
                 Detection.client_id == client_id,
                 Detection.datetime_utc >= start_date,
                 Detection.datetime_utc <= end_date,
             )
+            .order_by(col(Detection.advertisement_id))
         ).all()
