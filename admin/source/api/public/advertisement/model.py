@@ -11,4 +11,5 @@ class AdvertisementModel(SQLModel, table=True):
     name: str
     filename: str
     filename_in_system: str
+    active: bool = Field(default=True)
     client_id: int = Field(foreign_key="client.id", ondelete="CASCADE")

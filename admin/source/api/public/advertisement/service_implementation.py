@@ -1,5 +1,9 @@
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
+
+from sqlmodel import col
+
+from .requests import FilterQuery
 from typing import Sequence, cast
 
 from fastapi import HTTPException, UploadFile, status
@@ -14,7 +18,7 @@ from ..analyzer.repository import Repository as AnalyzerRepository
 from .dtos import Advertisement, AdvertisementIn
 from .model import AdvertisementModel
 from .processers import process_advertisement
-from .repository import Repository
+from .repository import Repository, UpdateDate
 from .save_advertisement import AdvertisementSaver
 from .service import Service
 
@@ -101,8 +105,12 @@ class ServiceImplementation(Service):
         )
         return AnalyzerModel(**{**args, "job_id": job.id})
 
-    async def get_by_client(self, client: Client) -> Sequence[Advertisement]:
-        advertisements = await self.repository.get_by_client(client.client_id)
+    async def get_by_client(
+        self, client: Client, query: FilterQuery
+    ) -> Sequence[Advertisement]:
+        advertisements = await self.repository.get_by_client(
+            client.client_id, filters=[col(AdvertisementModel.active) == query.active]
+        )
         return AdvertisementListAdapter.validate_python(advertisements)
 
     async def get_by_id(self, advertisement_id: int) -> Advertisement:
@@ -126,3 +134,24 @@ class ServiceImplementation(Service):
         scheduler = Scheduler.get_instance()
         for analyzer in analyzers:
             scheduler.delete_job(analyzer.job_id)
+
+    async def patch(
+        self, advertisement: Advertisement, data_to_update: dict
+    ) -> Advertisement:
+        advertisement_model = cast(
+            AdvertisementModel,
+            await self.repository.get_by_id(advertisement.advertisement_id),
+        )
+        advertisement_updated = await self.repository.update(
+            advertisement_model, UpdateDate.model_validate(data_to_update)
+        )
+
+        self.repository.commit()
+        if data_to_update.get("active") is False:
+            analyzers = await self.analyzer_repository.get_by_advertisement(
+                advertisement.advertisement_id
+            )
+            scheduler = Scheduler.get_instance()
+            for analyzer in analyzers:
+                scheduler.delete_job(analyzer.job_id)
+        return Advertisement.model_validate(advertisement_updated)

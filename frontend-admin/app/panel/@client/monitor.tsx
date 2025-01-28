@@ -29,7 +29,11 @@ export default function Monitor({ client, url }: Props) {
         { message: data.message, advertisement: data.advertisement, radioStationName: data.radio_station },
       ]);
     });
+    socketConnection.on("reconnect", () => {
+      socketConnection.emit("join_room", { id: client.id });
+    });
     return () => {
+      console.log("Am I executing it many times?");
       socketConnection.emit("leave_room", { id: client.id });
     };
   }, [client, url]);

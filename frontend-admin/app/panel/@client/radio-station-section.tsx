@@ -2,43 +2,68 @@
 import CustomSelect from "@/components/custom/custom-select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import Advertisement from "@/entities/Advertisement";
 import Client from "@/entities/client";
 import RadioStation from "@/entities/radio-station";
 import { saveAdvertisement } from "@/services/advertisement";
-import { useRouter } from "next/navigation";
-import { ReactNode, useRef, useState } from "react";
+import { addMinutes, compareDesc, format, isBefore } from "date-fns";
+import { useEffect, useRef, useState } from "react";
+import ButtonDelete from "./button-delete-advertisement";
 import Row from "./row";
 
 type Props = {
   radioStations: RadioStation[];
-  children?: ReactNode | ReactNode[];
   client: Client;
+  advertisements: Advertisement[];
 };
 
-export default function RadioStationSection({ radioStations, children }: Props) {
+type Message = {
+  message: string;
+  isError?: boolean;
+};
+
+export default function RadioStationSection({ advertisements, client, radioStations }: Props) {
   const [radioStationstoSend, setRadioStations] = useState<RadioStation[]>([]);
   const inputFile = useRef<HTMLInputElement>(null);
   const [radioSelected, setRadioSelected] = useState<RadioStation>();
-  const [messageError, setMessageError] = useState<string>();
-  const [messageSuccess, setMessageSucces] = useState<string>();
-  const { refresh } = useRouter();
+  const [message, setMessage] = useState<Message | null>(null);
+  const [advertisementsAux, setAdvertisements] = useState<Advertisement[]>(advertisements);
+  const [currentDateTime, setCurrentDateTime] = useState<string>("");
+  useEffect(() => {
+    const current = new Date();
+    setCurrentDateTime(format(addMinutes(current, 5), "yyyy-MM-dd'T'HH:mm"));
+  }, []);
   return (
     <form
       onSubmit={(event) => {
         event.preventDefault();
         if (radioStationstoSend.length === 0) return;
         const formData = new FormData(event.currentTarget);
+        if (client.kind === "SCHEDULE") {
+          const startDate = String(formData.get("start_date"));
+          const endDate = String(formData.get("end_date"));
+          const currentDateTime = addMinutes(new Date(), 5);
+          if (isBefore(startDate, currentDateTime)) {
+            setMessage({ message: "Start Date must be greather than " + currentDateTime, isError: true });
+            return;
+          }
+
+          if (compareDesc(startDate, endDate) !== 1) {
+            setMessage({ message: "Second Date must be greater than first Date", isError: true });
+            return;
+          }
+        }
+
         const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         formData.set("timezone", timezone);
         saveAdvertisement(formData).then((advertisement) => {
           if (!advertisement) {
-            setMessageError("Error to save");
-            setMessageSucces(undefined);
+            setMessage({ message: "Error to save", isError: true });
             return;
           }
-          refresh();
-          setMessageError(undefined);
-          setMessageSucces("File has been save sucessfully");
+          setAdvertisements((prev) => [...prev, advertisement]);
+          setMessage({ message: "File has been save sucessfully" });
         });
       }}
       className=" flex flex-col gap-5 grow "
@@ -77,7 +102,27 @@ export default function RadioStationSection({ radioStations, children }: Props) 
           Load Radio Stream
         </Button>
       </Row>
-      {children}
+      <h2 className="font-bold">Selected Files:</h2>
+      <div className="flex flex-col gap-5">
+        {advertisementsAux.map((adv) => (
+          <div key={adv.id} className="flex flex-row gap-x-5 items-center">
+            <Label>{adv.filename}</Label>
+            <ButtonDelete onClick={setAdvertisements} advertisement={adv} />
+          </div>
+        ))}
+      </div>
+      {client.kind === "SCHEDULE" && (
+        <Row className="flex-col gap-5 lg:flex-row">
+          <div className="flex flex-col w-full">
+            <Label>From:</Label>
+            <Input type="datetime-local" name="start_date" min={currentDateTime} required />
+          </div>
+          <div className="flex flex-col w-full">
+            <Label>To:</Label>
+            <Input type="datetime-local" min={currentDateTime} name="end_date" required />
+          </div>
+        </Row>
+      )}
       <Row>
         <label>Add</label>
         <Input ref={inputFile} name="file" accept=".mp3" type="file" required />
@@ -87,8 +132,9 @@ export default function RadioStationSection({ radioStations, children }: Props) 
           Load MP3
         </Button>
       </Row>
-      {messageError && <p className="w-full text-red-600 text-center">{messageError}</p>}
-      {messageSuccess && <p className="w-full text-green-600 text-center">{messageSuccess}</p>}
+      {message && (
+        <p className={`w-full ${message.isError ? "text-red-600" : "text-green-600"} text-center`}>{message.message}</p>
+      )}
     </form>
   );
 }

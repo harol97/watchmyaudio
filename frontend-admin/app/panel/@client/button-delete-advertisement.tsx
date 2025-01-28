@@ -1,18 +1,24 @@
-"use client";
 import { Button } from "@/components/ui/button";
 import Advertisement from "@/entities/Advertisement";
-import { deleteAdvertisement } from "@/services/advertisement";
-import { useRouter } from "next/navigation";
+import { desactiveAdvertisement } from "@/services/advertisement";
+import { Dispatch, SetStateAction } from "react";
 
 type Props = {
   advertisement: Advertisement;
+  onClick: Dispatch<SetStateAction<Advertisement[]>>;
 };
 
-export default function ButtonDelete({ advertisement }: Props) {
-  const { refresh } = useRouter();
+export default function ButtonDelete({ advertisement, onClick }: Props) {
   return (
-    <Button type="button" onClick={() => deleteAdvertisement(advertisement.id).then((result) => result && refresh())}>
-      Delete
+    <Button
+      type="button"
+      onClick={() =>
+        desactiveAdvertisement(advertisement.id).then(
+          (result) => result && onClick((prev) => prev.filter((adv) => adv.id !== advertisement.id))
+        )
+      }
+    >
+      Disable
     </Button>
   );
 }

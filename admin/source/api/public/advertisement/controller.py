@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Annotated
 from uuid import uuid4
 
-from fastapi import File, Form, HTTPException, UploadFile, status
+from fastapi import File, Form, HTTPException, Query, UploadFile, status
 from pydantic_extra_types.timezone_name import TimeZoneName
 
 from source.utils.timezone_utlis import to_utc
@@ -11,12 +11,18 @@ from ...admin.client.depends import ClientDepends
 from ...admin.radio_station.depends import ServiceDepends as RadioStationServiceDepends
 from .depends import FileSaverDepends, ServiceDepends
 from .dtos import AdvertisementIn
+from .requests import FilterQuery, UpdateQuery
 from uuid import uuid4
 
 
 class Controller:
-    async def get_by_client(self, service: ServiceDepends, client: ClientDepends):
-        return await service.get_by_client(client)
+    async def get_by_client(
+        self,
+        service: ServiceDepends,
+        query: Annotated[FilterQuery, Query()],
+        client: ClientDepends,
+    ):
+        return await service.get_by_client(client, query)
 
     async def create(
         self,
@@ -61,3 +67,12 @@ class Controller:
         await service.delete(advertisement)
         await file_saver.delete(advertisement.filename_in_system)
         return dict()
+
+    async def update(
+        self,
+        service: ServiceDepends,
+        advertisement_id: int,
+        query: Annotated[UpdateQuery, Query()],
+    ):
+        advertisement = await service.get_by_id(advertisement_id)
+        return await service.patch(advertisement, query.model_dump(exclude_none=True))

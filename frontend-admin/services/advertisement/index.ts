@@ -20,8 +20,16 @@ export async function deleteAdvertisement(advertisementId: number): Promise<bool
   return true;
 }
 
+export async function desactiveAdvertisement(advertisementId: number): Promise<boolean> {
+  const response = await fetchWithToken<Advertisement>("/public/advertisements/" + advertisementId + "?active=false", {
+    method: "PATCH",
+  });
+  if (response.status !== "success") return false;
+  return true;
+}
+
 export async function getMyAdvertisements(): Promise<Advertisement[]> {
-  const response = await fetchWithToken<Advertisement[]>("/public/advertisements", {
+  const response = await fetchWithToken<Advertisement[]>("/public/advertisements?active=true", {
     method: "GET",
     headers: { "Content-Type": "application/json" },
   });

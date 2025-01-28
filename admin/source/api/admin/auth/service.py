@@ -5,7 +5,7 @@ from source.utils.token import AuthData, create_access_token
 from ..user.dtos import User
 from .dtos import LoginResponse
 
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 43800
 
 
 class Service:

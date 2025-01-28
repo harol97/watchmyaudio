@@ -7,11 +7,14 @@ from ...admin.client.dtos import Client
 from ...admin.radio_station.dtos import RadioStation
 from .dtos import Advertisement, AdvertisementIn
 from .save_advertisement import AdvertisementSaver
+from .requests import FilterQuery, UpdateQuery
 
 
 class Service(ABC):
     @abstractmethod
-    async def get_by_client(self, client: Client) -> Sequence[Advertisement]:
+    async def get_by_client(
+        self, client: Client, query: FilterQuery
+    ) -> Sequence[Advertisement]:
         raise NotImplementedError()
 
     @abstractmethod
@@ -32,4 +35,10 @@ class Service(ABC):
 
     @abstractmethod
     async def delete(self, advertisement: Advertisement) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def patch(
+        self, advertisement: Advertisement, data_to_update: dict
+    ) -> Advertisement:
         raise NotImplementedError()

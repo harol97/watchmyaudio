@@ -21,3 +21,10 @@ advertisement_router.add_api_route(
     methods=["GET"],
     response_model=Sequence[Advertisement],
 )
+
+advertisement_router.add_api_route(
+    "/{advertisement_id}",
+    controller.update,
+    methods=["PATCH"],
+    response_model=Advertisement,
+)

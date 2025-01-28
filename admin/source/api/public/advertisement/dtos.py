@@ -23,3 +23,4 @@ class Advertisement(CustomBaseModel):
     advertisement_id: Annotated[int, Field(alias="id")]
     filename: str
     filename_in_system: str
+    active: bool

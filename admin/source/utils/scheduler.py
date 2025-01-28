@@ -30,8 +30,8 @@ class Scheduler:
 
     def delete_job(self, job_id: str):
         try:
-            self.apscheduler.remove_job(job_id)
             self.jobs_to_finish_process.add(job_id)
+            self.apscheduler.remove_job(job_id)
         except JobLookupError:
             ...
 

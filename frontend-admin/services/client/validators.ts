@@ -1,4 +1,4 @@
-import { z } from "zod";
+import {z} from "zod";
 
 export const CreateClientFormSchema = z
   .object({
@@ -21,8 +21,8 @@ export const EditClientFormSchema = z.object({
   email: z.string().email(),
   kind: z.enum(["UNDEFINED", "SCHEDULE"]).nullable(),
   password: z.string().nullable(),
-  phone: z.string(),
-  web: z.string(),
+  phone: z.string({ message: "error phone" }).nullable(),
+  web: z.string({ message: "error web" }).nullable(),
   language: z.enum(["NEPALI", "ENGLISH"], { message: "Incorrect Language" }),
 });
 

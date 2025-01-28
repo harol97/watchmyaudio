@@ -1,15 +1,11 @@
 import BasePage from "@/components/custom/base-page";
 import CustomSection, { CustomSectionChild } from "@/components/custom/custom-section";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { getMyAdvertisements } from "@/services/advertisement";
 import { me } from "@/services/client";
 import { getAllRadioStationClient } from "@/services/radio-station";
-import ButtonDelete from "./button-delete-advertisement";
 import Monitor from "./monitor";
 import RadioStationSection from "./radio-station-section";
 import ReportSection from "./report-section";
-import Row from "./row";
 
 export default async function HomeClientPage() {
   const radioStations = await getAllRadioStationClient();
@@ -20,23 +16,7 @@ export default async function HomeClientPage() {
     <BasePage title="DASHBOARD User" className="h-full">
       <CustomSection>
         <CustomSectionChild className=" border-solid border-[1px] border-[#2d4bac] shadow-2xl p-5 rounded-2xl">
-          <RadioStationSection client={client} radioStations={radioStations}>
-            <h2 className="font-bold">Selected Files:</h2>
-            <div className="flex flex-col gap-5">
-              {advertisements.map((adv) => (
-                <div key={adv.id} className="flex flex-row gap-x-5">
-                  <Label>{adv.filename}</Label>
-                  <ButtonDelete advertisement={adv} />
-                </div>
-              ))}
-            </div>
-            {client.kind === "SCHEDULE" && (
-              <Row className="flex-col gap-5 lg:flex-row">
-                <Input type="datetime-local" name="start_date" required />
-                <Input type="datetime-local" name="end_date" required />
-              </Row>
-            )}
-          </RadioStationSection>
+          <RadioStationSection advertisements={advertisements} client={client} radioStations={radioStations} />
           <ReportSection />
         </CustomSectionChild>
         <CustomSectionChild className="border-[0]">

@@ -2,12 +2,12 @@
 
 import Advertisement from "@/entities/Advertisement";
 import Client from "@/entities/client";
-import { FetchException } from "@/lib/exceptions-fetch";
+import {FetchException} from "@/lib/exceptions-fetch";
 import fetchWithToken from "@/lib/fetch-with-token";
-import { converFormDatatoObject } from "@/lib/utils";
-import { revalidatePath } from "next/cache";
-import { ClientResponse, GetAllResponse } from "./responses";
-import { ClientFormState, CreateClientFormSchema, EditClientFormSchema } from "./validators";
+import {converFormDatatoObject} from "@/lib/utils";
+import {revalidatePath} from "next/cache";
+import {ClientResponse, GetAllResponse} from "./responses";
+import {ClientFormState, CreateClientFormSchema, EditClientFormSchema} from "./validators";
 
 export async function me(): Promise<Client> {
   const response = await fetchWithToken<Client>("/public/clients/me", {
@@ -63,15 +63,15 @@ export async function createClient(formData: FormData): Promise<ClientFormState>
 }
 
 export async function updateClient(formData: FormData): Promise<ClientFormState> {
-  const password = formData.get("password") as string;
-  const kind = formData.get("kind") as string;
-  if (password.length === 0) formData.delete("password");
-  if (kind.length === 0) formData.delete("kind");
+  const entries = Object.fromEntries(formData.entries());
+  Object.entries(entries).forEach(([key, value]) => {
+    if (value.toString().length === 0) formData.delete(key);
+  });
   const validateFields = EditClientFormSchema.safeParse({
     name: formData.get("name"),
     email: formData.get("email"),
     password: formData.get("password"),
-    kind: kind,
+    kind: formData.get("kind"),
     phone: formData.get("phone"),
     web: formData.get("web"),
     language: formData.get("language"),

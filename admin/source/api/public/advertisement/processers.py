@@ -1,3 +1,4 @@
+from asyncio import run
 from datetime import datetime, timezone
 from difflib import SequenceMatcher
 from tempfile import NamedTemporaryFile
@@ -10,6 +11,11 @@ import torch
 from socketio import Client
 from transformers import Wav2Vec2ForCTC, Wav2Vec2Processor
 
+from source.api.public.advertisement.repository import UpdateDate
+from source.api.public.advertisement.repository_implementation import (
+    RepositoryImplementation,
+)
+from source.dependencies.session import get_session
 from source.utils.scheduler import Scheduler
 
 from ...admin.radio_station.dtos import RadioStation
@@ -42,6 +48,17 @@ def stream_to_audio(input_url, duration=10):
 # Función para calcular la similitud entre dos textos
 def similarity(a, b):
     return SequenceMatcher(None, a, b).ratio()
+
+
+async def update_advertisement(advertisement_id: int):
+    session = next(get_session())
+    repository = RepositoryImplementation(session)
+    advertisement_model = await repository.get_by_id(advertisement_id)
+    if not advertisement_model:
+        return
+    await repository.update(advertisement_model, UpdateDate(active=False))
+    session.commit()
+    session.close()
 
 
 def process_advertisement(
@@ -82,12 +99,16 @@ def process_advertisement(
 
     while True:
         # Capturar un fragmento del stream en memoria
+        out = False
         if end_date:
             current_datetime = datetime.now(timezone.utc)
-            if current_datetime >= end_date:
-                return
+            out = current_datetime >= end_date
 
         if scheduler.should_process_job_finish(job_id):
+            out = True
+
+        if out:
+            run(update_advertisement(advertisement.advertisement_id))
             return
 
         audio_data = stream_to_audio(stream_url, duration=fragment_duration)
