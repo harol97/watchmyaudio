@@ -28,10 +28,9 @@ export default function ReportSection() {
   const canvaElement = useRef<HTMLCanvasElement | null>(null);
   const [chartElement, setChartElement] = useState<Chart | null>(null);
   const [url, setUrl] = useState<string>("");
-  const aTag = useRef<HTMLAnchorElement | null>(null);
 
   useEffect(() => {
-    setUrl(window.location.href);
+    setUrl(window.location.origin);
   }, []);
 
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -52,27 +51,16 @@ export default function ReportSection() {
         <Input onChange={(event) => setEndDate(event.currentTarget.value)} id="endDate" type="datetime-local" />
       </Row>
       <div className="flex flex-row gap-x-5">
-        <Button
-          onClick={() => {
-            fetch(`${url}/api?startDate=${startDate}&endDate=${endDate}&timezone=${timezone}`).then((response) => {
-              const a = aTag.current;
-              if (!a) return;
-              if (!response.ok) return;
-              response.blob().then((blob) => {
-                const url = URL.createObjectURL(blob);
-                a.href = url;
-                a.click();
-              });
-            });
-          }}
-          disabled={!startDate || !endDate}
-          type="submit"
-        >
-          Export
+        <Button disabled={!startDate || !endDate}>
+          <a
+            aria-disabled={!startDate || !endDate}
+            target="_blank"
+            href={`${url}/panel/api?startDate=${startDate}&endDate=${endDate}&timezone=${timezone}`}
+            download="report.pdf"
+          >
+            Export
+          </a>
         </Button>
-        <a ref={aTag} target="_blank" className="hidden">
-          Export
-        </a>
         <Button
           disabled={!startDate || !endDate}
           onClick={async () => {
