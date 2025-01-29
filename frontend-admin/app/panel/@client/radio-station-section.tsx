@@ -39,7 +39,8 @@ export default function RadioStationSection({ advertisements, client, radioStati
       onSubmit={(event) => {
         event.preventDefault();
         if (radioStationstoSend.length === 0) return;
-        const formData = new FormData(event.currentTarget);
+        const myForm = event.currentTarget;
+        const formData = new FormData(myForm);
         if (client.kind === "SCHEDULE") {
           const startDate = String(formData.get("start_date"));
           const endDate = String(formData.get("end_date"));
@@ -62,6 +63,7 @@ export default function RadioStationSection({ advertisements, client, radioStati
             setMessage({ message: "Error to save", isError: true });
             return;
           }
+          myForm.reset();
           setAdvertisements((prev) => [...prev, advertisement]);
           setMessage({ message: "File has been save sucessfully" });
         });
