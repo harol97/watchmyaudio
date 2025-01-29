@@ -1,13 +1,13 @@
 import { redirect } from "next/navigation";
 
 type Props = {
-  searchParams: {
+  searchParams: Promise<{
     logout?: string;
-  };
+  }>;
 };
 
-export default function RootPage(params: Props) {
-  if (params.searchParams.logout) return redirect("login");
+export default async function RootPage(params: Props) {
+  if ((await params.searchParams).logout) return redirect("login");
   return redirect("/panel");
 }
 
