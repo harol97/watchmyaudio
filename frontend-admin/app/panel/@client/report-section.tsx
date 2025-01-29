@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { getDataChart } from "@/services/detection";
 import Chart from "chart.js/auto";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Row from "./row";
 
 const months = [
@@ -28,11 +28,6 @@ export default function ReportSection() {
   const [endDate, setEndDate] = useState<string | null>(null);
   const canvaElement = useRef<HTMLCanvasElement | null>(null);
   const [chartElement, setChartElement] = useState<Chart | null>(null);
-  const [url, setUrl] = useState<string>("");
-
-  useEffect(() => {
-    setUrl(window.location.origin);
-  }, []);
 
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const pathname = usePathname();
