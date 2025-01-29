@@ -1,9 +1,9 @@
 "use server";
 import baseFetch from "@/lib/base-fetch";
-import {cookies} from "next/headers";
-import {redirect} from "next/navigation";
-import {LoginResponse} from "./responses";
-import {LoginFormSchema, loginFormState} from "./validators";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { LoginResponse } from "./responses";
+import { LoginFormSchema, loginFormState } from "./validators";
 
 export async function loginAdmin(state: loginFormState, formData: FormData) {
   return loginUser(state, formData, "/admins/auth/login", "1");
@@ -37,14 +37,12 @@ async function loginUser(state: loginFormState, formData: FormData, path: string
   cookieStore.set("token", response.data.accesToken, {
     httpOnly: true,
     sameSite: "strict",
-    path: "/",
   });
   cookieStore.set("role", role, {
     httpOnly: true,
     sameSite: "strict",
-    path: "/",
   });
-  redirect("/");
+  redirect("/panel");
 }
 
 export async function logout() {
@@ -57,5 +55,5 @@ export async function logout() {
   if (role) {
     cookieStore.delete("role");
   }
-  redirect("/");
+  redirect("/?logout=true");
 }

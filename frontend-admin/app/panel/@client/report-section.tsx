@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { getDataChart } from "@/services/detection";
 import Chart from "chart.js/auto";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import Row from "./row";
 
@@ -34,6 +35,7 @@ export default function ReportSection() {
   }, []);
 
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const pathname = usePathname();
 
   return (
     <div className="flex flex-col items-start gap-5 justify-start ">
@@ -55,7 +57,7 @@ export default function ReportSection() {
           <a
             aria-disabled={!startDate || !endDate}
             target="_blank"
-            href={`${url}/panel/api?startDate=${startDate}&endDate=${endDate}&timezone=${timezone}`}
+            href={`${pathname}/api?startDate=${startDate}&endDate=${endDate}&timezone=${timezone}`}
             download="report.pdf"
           >
             Export

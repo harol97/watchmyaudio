@@ -1,7 +1,13 @@
 import { redirect } from "next/navigation";
 
-export default function RootPage() {
-  return (
-    redirect("/panel")
-  );
+type Props = {
+  searchParams: {
+    logout?: string;
+  };
+};
+
+export default function RootPage(params: Props) {
+  if (params.searchParams.logout) return redirect("login");
+  return redirect("/panel");
 }
+
