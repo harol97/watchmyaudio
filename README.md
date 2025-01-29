@@ -13,7 +13,7 @@ At the moment We're using docker. so You're free of choise a differente way
 
 2. execute as administrator
 
-        docker compose up -d admin-frontend       
+        docker compose up -d --build nginx       
 
 
 3. About it.

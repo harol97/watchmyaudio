@@ -11,7 +11,6 @@ Please check instructions in next sections
 Execute next steps once:
 
     1. uv sync
-    2. uv pip install librosa
     3. uv run python execute_seddings.py (execute only once)
     4. user administrator is (username:administrator@gmail.com, password:administrator)
 
