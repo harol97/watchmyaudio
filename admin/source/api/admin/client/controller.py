@@ -1,3 +1,5 @@
+from source.api.public.advertisement.requests import FilterQuery
+
 from ...public.advertisement.depends import (
     ServiceDepends as AdvertisementServiceDepends,
 )
@@ -13,7 +15,9 @@ class Controller:
         client_id: int,
     ):
         client = await service.get_by_id(client_id)
-        return await advertisement_service.get_by_client(client)
+        return await advertisement_service.get_by_client(
+            client, FilterQuery(active=True)
+        )
 
     async def create(self, service: ServiceDepends, new_client: ClientIn):
         return await service.create(new_client)

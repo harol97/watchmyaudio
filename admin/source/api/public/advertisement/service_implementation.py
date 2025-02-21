@@ -1,13 +1,10 @@
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
-
-from sqlmodel import col
-
-from .requests import FilterQuery
 from typing import Sequence, cast
 
 from fastapi import HTTPException, UploadFile, status
 from pydantic import TypeAdapter
+from sqlmodel import col
 
 from source.utils.scheduler import Scheduler
 
@@ -19,6 +16,7 @@ from .dtos import Advertisement, AdvertisementIn
 from .model import AdvertisementModel
 from .processers import process_advertisement
 from .repository import Repository, UpdateDate
+from .requests import FilterQuery
 from .save_advertisement import AdvertisementSaver
 from .service import Service
 

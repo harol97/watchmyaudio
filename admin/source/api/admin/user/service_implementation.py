@@ -2,7 +2,6 @@ from typing import Sequence, cast
 
 from fastapi import HTTPException, status
 from pydantic.type_adapter import TypeAdapter
-from sqlmodel import delete
 
 from source.utils.password import generate, verify
 

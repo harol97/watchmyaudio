@@ -6,8 +6,8 @@ from fastapi import UploadFile
 from ...admin.client.dtos import Client
 from ...admin.radio_station.dtos import RadioStation
 from .dtos import Advertisement, AdvertisementIn
+from .requests import FilterQuery
 from .save_advertisement import AdvertisementSaver
-from .requests import FilterQuery, UpdateQuery
 
 
 class Service(ABC):

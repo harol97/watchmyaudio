@@ -1,10 +1,9 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
 
-from .responses import GetDataResponse
-
 from ...admin.client.dtos import Client
 from .dtos import Report
+from .responses import GetDataResponse
 
 
 class Service(ABC):

@@ -12,7 +12,6 @@ from ...admin.radio_station.depends import ServiceDepends as RadioStationService
 from .depends import FileSaverDepends, ServiceDepends
 from .dtos import AdvertisementIn
 from .requests import FilterQuery, UpdateQuery
-from uuid import uuid4
 
 
 class Controller:

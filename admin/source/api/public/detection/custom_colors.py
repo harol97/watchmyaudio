@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+
 from reportlab.lib.colors import Color
 
 

@@ -1,0 +1,50 @@
+services:
+  admin-backend:
+    restart: always
+    build:
+      context: admin
+    ports:
+      - "8001:8000"
+    environment:
+      - url=mysql+mysqlconnector://root:I0sA7SCBAdU5VdI@db:3306/base
+      - db_scheduler/database2.db:/app/database2.db
+    depends_on:
+      - db
+
+  admin-frontend:
+    restart: always
+    depends_on:
+      - admin-backend
+    build:
+      context: frontend-admin
+    ports:
+      - "80:3000"
+    environment:
+      - BASE_URL=http://admin-backend:8000/api
+      - SOCKET_URL=http://188.34.166.250:8001
+
+  db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: I0sA7SCBAdU5VdI
+    volumes:
+      - db_mysql:/va/lib/mysql
+
+  nginx:
+    restart: always
+    build:
+      context: .
+    depends_on:
+      - admin-backend
+      - admin-frontend
+
+    ports:
+      - "80:80"
+      - "443:443"
+
+
+volumes:
+  db_mysql:
+  db_scheduler:
+

@@ -2,15 +2,13 @@ from dataclasses import dataclass
 from itertools import groupby
 from random import choice
 from tempfile import NamedTemporaryFile
-from reportlab.graphics.charts.linecharts import HorizontalLineChart
 
 from fastapi.responses import FileResponse
+from reportlab.graphics.charts.linecharts import HorizontalLineChart
 from reportlab.graphics.shapes import Drawing
 from reportlab.lib.colors import black
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.pdfbase.pdfmetrics import stringWidth
-from reportlab.pdfgen import canvas
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer
 from reportlab.platypus.tables import Table
 
@@ -134,7 +132,7 @@ class PdfGenerator(ReportFileGenerator):
             body.append(table)
 
         else:
-            body.append("There are not detection yet.")
+            body.append(Paragraph("There are not detections yet"))
 
         doc.build(body)
         return FileResponse(self.temp_file.name, media_type="application/pdf")

@@ -1,15 +1,15 @@
 from dataclasses import dataclass
-from random import choice
-from .custom_colors import colors
 from datetime import datetime
 from itertools import groupby
+from random import choice
 from typing import cast
 
 from ...admin.client.dtos import Client
+from .custom_colors import colors
 from .dtos import Report
 from .repository import Repository
-from .service import Service
 from .responses import GetDataResponse
+from .service import Service
 
 
 @dataclass
