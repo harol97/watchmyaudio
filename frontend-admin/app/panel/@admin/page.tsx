@@ -17,14 +17,14 @@ export default async function HomeAdminPage() {
       <CustomSection>
         <CustomSectionChild>
           <p>Create Client</p>
-          <CustomFormClient type="create" />
+          <CustomFormClient radioStations={radioStations} type="create" />
         </CustomSectionChild>
         <CustomSectionChild>
           <AdvertisementComponent clients={clients} />
         </CustomSectionChild>
       </CustomSection>
       <CustomSection>
-        <ClientSecion clients={clients} />
+        <ClientSecion radioStations={radioStations} clients={clients} />
         <CustomSectionChild>
           <div>
             <p>Load Stream Radio Stations</p>

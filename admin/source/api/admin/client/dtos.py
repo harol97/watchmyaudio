@@ -14,8 +14,9 @@ class ClientIn(CustomBaseModel):
     password: str
     kind: ClientKind
     web: HttpUrl | None = None
-    language: str
+    language: Literal["NEPALI", "ENGLISH"]
     phone: str | None = None
+    radio_station_ids: Annotated[list[int], Field(alias="radioStationIds")]
 
 
 class UpdateBody(CustomBaseModel):
@@ -25,6 +26,9 @@ class UpdateBody(CustomBaseModel):
     web: HttpUrl | None = None
     language: str | None = None
     phone: str | None = None
+    radio_station_ids: Annotated[list[int] | None, Field(alias="radioStationIds")] = (
+        None
+    )
 
 
 class Client(CustomBaseModel):

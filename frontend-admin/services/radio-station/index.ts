@@ -33,7 +33,7 @@ export async function deleteRadioStation(id: string): Promise<boolean> {
 }
 
 export async function getAllRadioStationClient(): Promise<RadioStation[]> {
-  const response = await fetchWithToken<RadioStation[]>("/public/radio-stations", {
+  const response = await fetchWithToken<RadioStation[]>("/public/clients/radio-stations", {
     method: "GET",
     headers: { "Content-Type": "application/json" },
   });

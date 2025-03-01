@@ -1,5 +1,6 @@
 from typing import Sequence
 
+from sqlalchemy import ColumnExpressionArgument
 from sqlmodel import select
 
 from source.utils.base_repository import BaseRepository
@@ -8,6 +9,9 @@ from .model import AnalyzerModel
 
 
 class Repository(BaseRepository):
+    def get(self, filters: list[ColumnExpressionArgument]) -> Sequence[AnalyzerModel]:
+        return self.session.exec(select(AnalyzerModel).where(*filters)).all()
+
     def create(self, analyzer: AnalyzerModel) -> AnalyzerModel:
         self.session.add(analyzer)
         self.session.flush()

@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Sequence
 
+from ..radio_station.dtos import RadioStation
 from .dtos import Client, ClientIn, UpdateBody
 
 
@@ -31,4 +32,8 @@ class Service(ABC):
 
     @abstractmethod
     async def delete(self, client_id: int):
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def get_radio_stations(self, client_id: int) -> list[RadioStation]:
         raise NotImplementedError()

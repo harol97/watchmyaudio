@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
 from ...public.advertisement.dtos import Advertisement
+from ..radio_station.dtos import RadioStation
 from .controller import Controller
 from .dtos import Client
 
@@ -30,6 +31,13 @@ client_router.add_api_route(
     controller.get_advertimsements,
     methods=["GET"],
     response_model=list[Advertisement],
+)
+
+client_router.add_api_route(
+    "/{client_id}/radio-stations",
+    controller.get_radio_stations,
+    methods=["GET"],
+    response_model=list[RadioStation],
 )
 
 client_router.add_api_route(

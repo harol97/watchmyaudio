@@ -23,3 +23,4 @@ def get_service(
 
 
 ServiceDepends = Annotated[Service, Depends(get_service)]
+RepositoryDepends = Annotated[Repository, Depends(get_repository)]

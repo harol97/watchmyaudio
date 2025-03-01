@@ -2,12 +2,13 @@
 
 import Advertisement from "@/entities/Advertisement";
 import Client from "@/entities/client";
-import {FetchException} from "@/lib/exceptions-fetch";
+import RadioStation from "@/entities/radio-station";
+import { FetchException } from "@/lib/exceptions-fetch";
 import fetchWithToken from "@/lib/fetch-with-token";
-import {converFormDatatoObject} from "@/lib/utils";
-import {revalidatePath} from "next/cache";
-import {ClientResponse, GetAllResponse} from "./responses";
-import {ClientFormState, CreateClientFormSchema, EditClientFormSchema} from "./validators";
+import { converFormDatatoObject } from "@/lib/utils";
+import { revalidatePath } from "next/cache";
+import { ClientResponse, GetAllResponse } from "./responses";
+import { ClientFormState, CreateClientFormSchema, EditClientFormSchema } from "./validators";
 
 export async function me(): Promise<Client> {
   const response = await fetchWithToken<Client>("/public/clients/me", {
@@ -46,9 +47,11 @@ export async function createClient(formData: FormData): Promise<ClientFormState>
     };
   }
   formData.delete("passwordConfirm");
+  const toSend = converFormDatatoObject(formData);
+  toSend["radioStationIds"] = formData.getAll("radioStationIds") as any;
   const response = await fetchWithToken<ClientResponse>("/admins/clients", {
     method: "POST",
-    body: JSON.stringify(converFormDatatoObject(formData)),
+    body: JSON.stringify(toSend),
     headers: { "Content-Type": "application/json" },
   });
   if (response.status !== "success")
@@ -89,9 +92,11 @@ export async function updateClient(formData: FormData): Promise<ClientFormState>
   }
   const id = formData.get("id");
   formData.delete("id");
+  const toSend = converFormDatatoObject(formData);
+  toSend["radioStationIds"] = formData.getAll("radioStationIds") as any;
   const response = await fetchWithToken<ClientResponse>(`/admins/clients/${id}`, {
     method: "PATCH",
-    body: JSON.stringify(converFormDatatoObject(formData)),
+    body: JSON.stringify(toSend),
     headers: { "Content-Type": "application/json" },
   });
   if (response.status !== "success")
@@ -128,4 +133,13 @@ export async function getAll() {
   });
   if (response.status !== "success") return [];
   return response.data;
+}
+
+export async function getMyRadioStations(clientId: number) {
+  const response = await fetchWithToken<RadioStation[]>("/admins/clients/" + clientId + "/radio-stations", {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  });
+  if (response.status === "success") return response.data;
+  return [];
 }

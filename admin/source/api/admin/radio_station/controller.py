@@ -23,4 +23,5 @@ class Controller:
         return {}
 
     async def getAll(self, service: ServiceDepends):
-        return await service.get_all()
+        results = await service.get_all()
+        return results

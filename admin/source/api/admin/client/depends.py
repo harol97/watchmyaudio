@@ -6,6 +6,7 @@ from source.dependencies.session import SessionDepends
 from source.utils.token import AuthDataDepends
 
 from ...public.analyzer.depends import RepositoryDepends as AnalyzerRepositoryDepends
+from ..radio_station.depends import RepositoryDepends as RadioStationRepository
 from .dtos import Client
 from .repository import ClientRepository
 from .repository_implementation import ClientRepositoryImplementaion
@@ -21,9 +22,11 @@ ClientRepositoryDepends = Annotated[ClientRepository, Depends(get_repository)]
 
 
 def get_service(
-    repository: ClientRepositoryDepends, analyzer_repository: AnalyzerRepositoryDepends
+    repository: ClientRepositoryDepends,
+    analyzer_repository: AnalyzerRepositoryDepends,
+    radio_reporitory: RadioStationRepository,
 ) -> Service:
-    return ServiceImplementation(repository, analyzer_repository)
+    return ServiceImplementation(repository, analyzer_repository, radio_reporitory)
 
 
 ServiceDepends = Annotated[Service, Depends(get_service)]

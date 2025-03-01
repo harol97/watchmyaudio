@@ -3,7 +3,7 @@ from source.api.public.advertisement.requests import FilterQuery
 from ...public.advertisement.depends import (
     ServiceDepends as AdvertisementServiceDepends,
 )
-from .depends import ServiceDepends
+from .depends import ClientDepends, ServiceDepends
 from .dtos import ClientIn, UpdateBody
 
 
@@ -34,3 +34,11 @@ class Controller:
     async def delete(self, service: ServiceDepends, client_id: int):
         await service.delete(client_id)
         return {}
+
+    async def get_radio_stations(self, service: ServiceDepends, client_id: int):
+        return await service.get_radio_stations(client_id)
+
+    async def get_my_radio_stations(
+        self, service: ServiceDepends, client: ClientDepends
+    ):
+        return await service.get_radio_stations(client.client_id)

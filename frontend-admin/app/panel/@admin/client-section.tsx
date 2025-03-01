@@ -1,21 +1,24 @@
 "use client";
 
 import CustomFormClient from "@/components/custom/custom-form-client";
+import { ClientComplete } from "@/components/custom/custom-form-client/custom-form-client";
 import { CustomSectionChild } from "@/components/custom/custom-section";
 import CustomSelect from "@/components/custom/custom-select";
 import { Button } from "@/components/ui/button";
 import Client from "@/entities/client";
-import { deleteClient } from "@/services/client";
+import RadioStation from "@/entities/radio-station";
+import { deleteClient, getMyRadioStations } from "@/services/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 type Props = {
   clients: Client[];
+  radioStations: RadioStation[];
 };
 
-export default function ClientSecion({ clients }: Props) {
+export default function ClientSecion({ radioStations, clients }: Props) {
   const [disabled, setDisabled] = useState<boolean>(true);
-  const [client, setClient] = useState<Client>();
+  const [client, setClient] = useState<ClientComplete>();
   const { refresh } = useRouter();
   return (
     <CustomSectionChild>
@@ -23,7 +26,13 @@ export default function ClientSecion({ clients }: Props) {
       <div className="flex flex-row gap-x-5">
         <CustomSelect
           value={String(client?.id)}
-          onChange={(value) => setClient(clients.find((cli) => cli.id === Number(value)))}
+          onChange={async (value) => {
+            const client = clients.find((cli) => cli.id === Number(value));
+            if (client) {
+              const myRadioStations = await getMyRadioStations(client.id);
+              setClient({ ...client, radioStations: myRadioStations });
+            } else setClient(undefined);
+          }}
           items={clients.map((client) => ({ label: client.name, value: String(client.id) }))}
         />
         <Button
@@ -55,6 +64,7 @@ export default function ClientSecion({ clients }: Props) {
         disabled={disabled}
         onCancel={() => setDisabled(true)}
         type="edit"
+        radioStations={radioStations}
       />
     </CustomSectionChild>
   );

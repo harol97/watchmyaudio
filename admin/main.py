@@ -3,11 +3,10 @@ from datetime import datetime
 
 from fastapi import FastAPI
 from socketio import ASGIApp, AsyncServer
-from sqlmodel import SQLModel
 
 from source.api import api_router
 from source.api.public.detection.model import Detection
-from source.dependencies.session import engine, get_session
+from source.dependencies.session import get_session
 from source.setting import setting
 from source.utils.scheduler import Scheduler
 
@@ -16,7 +15,6 @@ scheduler = Scheduler.get_instance().apscheduler
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    SQLModel.metadata.create_all(engine)
     scheduler.start()
     yield
     scheduler.shutdown(wait=False)

@@ -39,8 +39,12 @@ class ClientRepositoryImplementaion(ClientRepository):
     async def update(
         self, new_client: ClientModelUpdate, old_client: ClientModel
     ) -> ClientModel:
-        old_client.sqlmodel_update(new_client.model_dump(exclude_none=True))
+        old_client.sqlmodel_update(
+            new_client.model_dump(exclude_none=True, exclude={"radio_station"})
+        )
         self.session.add(old_client)
+        if new_client.radio_stations is not None:
+            old_client.radio_stations = new_client.radio_stations
         self.session.flush()
         return old_client
 

@@ -5,11 +5,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function converFormDatatoObject(formData: FormData) {
-  /* eslint-disable  @typescript-eslint/no-explicit-any */
-  const object: Record<string, any> = {};
-  formData.forEach((value, key) => {
-    object[key] = value;
-  });
-  return object;
+export function converFormDatatoObject(formData: FormData): any {
+  return Object.fromEntries(formData.entries());
 }

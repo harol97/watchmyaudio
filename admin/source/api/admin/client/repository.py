@@ -5,6 +5,7 @@ from sqlmodel import SQLModel
 
 from source.utils.base_repository import BaseRepository
 
+from ..radio_station.model import RadioStationModel
 from .model import ClientModel
 
 
@@ -17,6 +18,7 @@ class ClientModelUpdate(SQLModel):
     language: str | None = None
     url: str | None = None
     kind: str | None = None
+    radio_stations: list[RadioStationModel] | None = None
 
 
 class ClientRepository(ABC, BaseRepository):
