@@ -5,6 +5,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function converFormDatatoObject(formData: FormData): any {
+export function converFormDatatoObject(formData: FormData) {
   return Object.fromEntries(formData.entries());
 }
