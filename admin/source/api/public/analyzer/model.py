@@ -25,6 +25,6 @@ class AnalyzerModel(SQLModel, table=True):
     end_date: datetime | None
     job_id: str
 
-    client: "ClientModel" = Relationship()
-    radio_station: "RadioStationModel" = Relationship()
+    client: "ClientModel" = Relationship(back_populates="analyzer")
+    radio_station: "RadioStationModel" = Relationship(back_populates="analyzer")
     advertisement: "AdvertisementModel" = Relationship()

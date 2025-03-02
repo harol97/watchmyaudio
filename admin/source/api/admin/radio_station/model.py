@@ -5,6 +5,7 @@ from sqlmodel import Column, Field, Integer, Relationship, SQLModel
 from ..client_radio_station.model import ClienRadioStationModel
 
 if TYPE_CHECKING:
+    from ...public.analyzer.model import AnalyzerModel
     from ..client.model import ClientModel
 
 
@@ -21,3 +22,4 @@ class RadioStationModel(SQLModel, table=True):
     clients: list["ClientModel"] = Relationship(
         back_populates="radio_stations", link_model=ClienRadioStationModel
     )
+    analyzer: "AnalyzerModel" = Relationship(back_populates="radio_station")

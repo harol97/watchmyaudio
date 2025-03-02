@@ -8,6 +8,7 @@ from source.utils.database_helpers import HttpUrlType
 from ..client_radio_station.model import ClienRadioStationModel
 
 if TYPE_CHECKING:
+    from ...public.analyzer.model import AnalyzerModel
     from ..radio_station.model import RadioStationModel
 
 ClientKind = Literal["UNDEFINED", "SCHEDULE"]
@@ -32,7 +33,12 @@ class ClientModel(SQLModel, table=True):
     radio_stations: list["RadioStationModel"] = Relationship(
         back_populates="clients", link_model=ClienRadioStationModel
     )
+    analyzer: "AnalyzerModel" = Relationship(back_populates="client")
 
     @property
-    def radio_station_ids(self):
-        return [radio_station.radio_station_id for radio_station in self.radio_stations]
+    def radio_station_ids(self) -> list[int]:
+        return [
+            radio_station.radio_station_id
+            for radio_station in self.radio_stations
+            if radio_station.radio_station_id
+        ]

@@ -56,16 +56,16 @@ class ServiceImplementation(Service):
             old_radio_station_ids = set(client.radio_station_ids)
             new_radio_station_ids = set(data.radio_station_ids)
             ids_to_delete = (
-                new_radio_station_ids - old_radio_station_ids
+                old_radio_station_ids - new_radio_station_ids
             )  # to delete process on schedule
             radio_stations = await self.radio_station_repository.get_by_ids(
-                list(ids_to_delete)
+                data.radio_station_ids
             )
             model_update.radio_stations = list(radio_stations)
             analyzers = self.analyzer_repository.get(
                 [
-                    ClientModel.client_id == client.client_id,
-                    col(RadioStationModel.radio_station_id).in_(data.radio_station_ids),
+                    ClientModel.client_id == client.client_id,  # type: ignore
+                    col(RadioStationModel.radio_station_id).in_(ids_to_delete),
                 ]
             )
             for analyzer in analyzers:
